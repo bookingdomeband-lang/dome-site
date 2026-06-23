@@ -1,6 +1,6 @@
 toml
 
-name = "site-dome"
+name = "dome-site"
 compatibility_date = "2025-06-23"
 
 [
