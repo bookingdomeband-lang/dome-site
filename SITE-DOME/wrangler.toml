@@ -1,3 +1,9 @@
-[build]
-  command = "npm install"
-  functions_directory = "functions"
+toml
+
+name = "site-dome"
+compatibility_date = "2025-06-23"
+
+[
+assets
+]
+directory = "."
