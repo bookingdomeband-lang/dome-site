@@ -1230,9 +1230,23 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       for (const p of products) {
         const hasColors = p.colors && p.colors.length > 0;
         const colorList = hasColors ? p.colors : [{ name_fr: '_' }];
-        for (const color of colorList) {
+
+        colorList.forEach((color, ci) => {
           const colorKey = color.name_fr;
-          const colorLabel = hasColors ? ` <span style="color:var(--accent-dark)">(${colorKey})</span>` : '';
+          const isFirst = ci === 0;
+          const rowStyle = !isFirst ? 'border-top:1px dashed var(--border);' : '';
+
+          const nameCell = isFirst
+            ? `<td rowspan="${colorList.length}" style="vertical-align:top;padding-top:0.85rem;">
+                <strong>${p.name_fr}</strong><br>
+                <span style="font-size:0.7rem;color:var(--text-dim)">${p.type_fr}</span>
+               </td>`
+            : '';
+
+          const colorLabel = hasColors
+            ? `<span style="font-size:0.65rem;letter-spacing:0.15em;color:var(--accent-dark);display:block;margin-bottom:6px;">${colorKey}</span>`
+            : '';
+
           if (p.has_sizes) {
             const sizeInputs = sizes.map(size => {
               const current = currentStock[p.id]?.[size]?.[colorKey] ?? '';
@@ -1243,15 +1257,15 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
                   id="init-${p.id}-${size}-${colorKey}">
               </div>`;
             }).join('');
-            rows += `<tr>
-              <td><strong>${p.name_fr}</strong>${colorLabel}<br><span style="font-size:0.7rem;color:var(--text-dim)">${p.type_fr}</span></td>
-              <td><div style="display:flex;gap:8px;align-items:flex-end;">${sizeInputs}</div></td>
+            rows += `<tr style="${rowStyle}">
+              ${nameCell}
+              <td>${colorLabel}<div style="display:flex;gap:8px;align-items:flex-end;">${sizeInputs}</div></td>
             </tr>`;
           } else {
             const current = currentStock[p.id]?.['—']?.[colorKey] ?? '';
-            rows += `<tr>
-              <td><strong>${p.name_fr}</strong>${colorLabel}<br><span style="font-size:0.7rem;color:var(--text-dim)">${p.type_fr}</span></td>
-              <td><div style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;">
+            rows += `<tr style="${rowStyle}">
+              ${nameCell}
+              <td>${colorLabel}<div style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;">
                 <label style="font-size:0.55rem;letter-spacing:0.15em;color:var(--text-dim);">Quantité</label>
                 <input type="number" min="0" value="${current}" placeholder="0"
                   style="width:70px;background:var(--black);border:1px solid var(--border);color:var(--text);padding:5px 8px;font-size:0.8rem;"
@@ -1259,7 +1273,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
               </div></td>
             </tr>`;
           }
-        }
+        });
       }
 
       const modal = document.createElement('div');
