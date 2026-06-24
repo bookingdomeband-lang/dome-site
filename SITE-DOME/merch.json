@@ -8,7 +8,18 @@
     "price": 25,
     "image": "tshirt-beyond.jpg",
     "has_sizes": true,
-    "colors": []
+    "colors": [
+      {
+        "name_fr": "Noir",
+        "name_en": "Black",
+        "image": null
+      },
+      {
+        "name_fr": "Blanc",
+        "name_en": "White",
+        "image": null
+      }
+    ]
   },
   {
     "id": "tshirt-tour",
