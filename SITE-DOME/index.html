@@ -1339,6 +1339,8 @@
       toast_size: 'Choisissez une taille',
       footer_copy: '© 2025 DOME BAND — Association loi 1901',
       gallery_placeholder: 'Photos à venir',
+      stock_out: 'Épuisé',
+      stock_low: 'Plus que',
     },
     en: {
       nav_band: 'Band',
@@ -1380,6 +1382,8 @@
       cart_qty: 'Qty',
       toast_added: 'Added to cart',
       toast_size: 'Please select a size',
+      stock_out: 'Sold out',
+      stock_low: 'Only',
       footer_copy: '© 2025 DOME BAND',
       gallery_placeholder: 'Photos coming soon',
     }
@@ -1413,7 +1417,59 @@
   // =============================================
 
   // =============================================
-  // MERCH — chargé depuis merch.json
+  // STOCK — chargé depuis /get-stock
+  // =============================================
+  let stockData = {};
+
+  async function loadStock() {
+    try {
+      const res = await fetch('/get-stock');
+      stockData = await res.json();
+      applyStockToMerch();
+    } catch(e) { console.log('Stock non disponible'); }
+  }
+
+  function applyStockToMerch() {
+    const grid = document.getElementById('merchGrid');
+    if (!grid) return;
+    grid.querySelectorAll('.merch-item').forEach(item => {
+      const productId = item.dataset.productId;
+      if (!productId || !stockData[productId]) return;
+      const sizes = stockData[productId];
+
+      // Update size buttons
+      item.querySelectorAll('.size-btn').forEach(btn => {
+        const qty = sizes[btn.dataset.size] ?? 0;
+        if (qty <= 0) {
+          btn.disabled = true;
+          btn.style.opacity = '0.3';
+          btn.style.cursor = 'not-allowed';
+          btn.title = tr ? tr('stock_out') : 'Épuisé';
+        }
+      });
+
+      // For products without sizes
+      const addBtn = item.querySelector('.btn-add');
+      if (addBtn && addBtn.dataset.noSize === 'true') {
+        const qty = sizes['—'] ?? 0;
+        if (qty <= 0) {
+          addBtn.disabled = true;
+          addBtn.textContent = tr ? tr('stock_out') : 'Épuisé';
+          addBtn.style.opacity = '0.5';
+          addBtn.style.cursor = 'not-allowed';
+        }
+      }
+
+      // Show low stock warning (3 or less)
+      const totalStock = Object.values(sizes).reduce((a, b) => a + b, 0);
+      const priceEl = item.querySelector('.merch-price');
+      if (priceEl && totalStock > 0 && totalStock <= 3) {
+        priceEl.insertAdjacentHTML('afterend', `<p style="font-size:0.65rem;color:var(--red);letter-spacing:0.1em;margin-top:4px;">Plus que ${totalStock} en stock</p>`);
+      }
+    });
+  }
+
+  // =============================================
   // =============================================
   async function loadMerch() {
     try {
@@ -1444,7 +1500,7 @@
         ? `<img src="${p.image}" alt="${name}" class="merch-img">`
         : `<div class="merch-img-placeholder"><svg width="80" height="80" viewBox="0 0 80 80" fill="none"><path d="M10 20 L25 10 L40 18 L55 10 L70 20 L60 28 L60 70 L20 70 L20 28 Z" stroke="white" stroke-width="1.5" fill="none"/></svg></div>`;
       return `
-        <div class="merch-item">
+        <div class="merch-item" data-product-id="${p.id}">
           ${img}
           <div class="merch-info">
             <p class="merch-type">${type}</p>
@@ -1452,7 +1508,7 @@
             ${sizes}
             <div class="merch-bottom">
               <span class="merch-price">${p.price} €</span>
-              <button class="btn-add" data-name="${name}" data-price="${p.price}" ${noSize}>${btnLabel}</button>
+              <button class="btn-add" data-id="${p.id}" data-name="${name}" data-price="${p.price}" ${noSize}>${btnLabel}</button>
             </div>
           </div>
         </div>`;
@@ -1481,11 +1537,11 @@
           if (!active) { showToast(tr('toast_size')); return; }
           const existing = cart.find(i => i.name === btn.dataset.name && i.size === active.dataset.size);
           if (existing) existing.qty++;
-          else cart.push({ name: btn.dataset.name, price: parseInt(btn.dataset.price), size: active.dataset.size, qty: 1 });
+          else cart.push({ id: btn.dataset.id, name: btn.dataset.name, price: parseInt(btn.dataset.price), size: active.dataset.size, qty: 1 });
         } else {
           const existing = cart.find(i => i.name === btn.dataset.name);
           if (existing) existing.qty++;
-          else cart.push({ name: btn.dataset.name, price: parseInt(btn.dataset.price), size: null, qty: 1 });
+          else cart.push({ id: btn.dataset.id, name: btn.dataset.name, price: parseInt(btn.dataset.price), size: null, qty: 1 });
         }
         updateCartUI();
         showToast(tr('toast_added'));
@@ -1830,7 +1886,7 @@
 
   // Initial render with default language
   applyTranslations();
-  loadMerch();
+  loadMerch().then(() => loadStock());
   loadDates();
   loadMembers();
 

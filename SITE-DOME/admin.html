@@ -295,6 +295,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   <button class="tab active" onclick="switchTab('merch')">Merch</button>
   <button class="tab" onclick="switchTab('concerts')">Concerts</button>
   <button class="tab" onclick="switchTab('membres')">Membres</button>
+  <button class="tab" onclick="switchTab('stock')">Stock</button>
 </div>
 
 <main>
@@ -328,6 +329,20 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       <button class="btn btn-primary" onclick="openMembreForm()">+ Ajouter un membre</button>
     </div>
     <div id="membres-list"><div class="loading">Chargement...</div></div>
+  </div>
+  <!-- ===== STOCK ===== -->
+  <div class="tab-content" id="tab-stock">
+    <div class="section-header">
+      <h2>Gestion du stock</h2>
+      <div style="display:flex;gap:0.75rem;">
+        <button class="btn btn-secondary" onclick="loadStockView()">↺ Rafraîchir</button>
+        <button class="btn btn-primary" onclick="initStock()">⚡ Initialiser depuis stock-init.json</button>
+      </div>
+    </div>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1.5rem;line-height:1.7;">
+      Le stock est mis à jour automatiquement par Stripe après chaque commande. Vous pouvez modifier manuellement une quantité en cliquant sur la valeur.
+    </p>
+    <div id="stock-list"><div class="loading">Chargement...</div></div>
   </div>
 
 </main>
@@ -825,11 +840,89 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   });
 
   // =============================================
+  // STOCK
+  // =============================================
+  async function loadStockView() {
+    const el = document.getElementById('stock-list');
+    el.innerHTML = '<div class="loading">Chargement...</div>';
+    try {
+      const res = await fetch('/get-stock');
+      const stock = await res.json();
+
+      if (!Object.keys(stock).length) {
+        el.innerHTML = '<div class="empty-state">Aucun stock initialisé — cliquez sur "Initialiser depuis stock-init.json"</div>';
+        return;
+      }
+
+      let html = `<table class="data-table">
+        <thead><tr><th>Produit</th><th>Taille</th><th>Quantité</th><th>Modifier</th></tr></thead><tbody>`;
+
+      for (const [productId, sizes] of Object.entries(stock)) {
+        for (const [size, qty] of Object.entries(sizes)) {
+          const color = qty === 0 ? 'var(--red)' : qty <= 3 ? '#e0a020' : 'var(--green)';
+          html += `<tr>
+            <td><strong>${productId}</strong></td>
+            <td>${size}</td>
+            <td><span style="color:${color};font-weight:600;">${qty}</span></td>
+            <td>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <input type="number" min="0" value="${qty}" style="width:70px;background:var(--black);border:1px solid var(--border);color:var(--text);padding:4px 8px;font-size:0.8rem;" id="stock-${productId}-${size}">
+                <button class="btn btn-secondary btn-sm" onclick="updateStock('${productId}','${size}')">Sauver</button>
+              </div>
+            </td>
+          </tr>`;
+        }
+      }
+
+      html += '</tbody></table>';
+      el.innerHTML = html;
+    } catch(e) {
+      el.innerHTML = `<div class="empty-state">Erreur : ${e.message}</div>`;
+    }
+  }
+
+  async function updateStock(productId, size) {
+    const input = document.getElementById(`stock-${productId}-${size}`);
+    const qty = parseInt(input.value);
+    try {
+      const res = await fetch('/update-stock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, size, qty }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Stock mis à jour : ${productId} / ${size} → ${qty}`);
+        loadStockView();
+      } else throw new Error(data.error);
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  async function initStock() {
+    if (!confirm('Initialiser le stock depuis stock-init.json ? Cela écrasera les valeurs actuelles.')) return;
+    try {
+      const res = await fetch('/stock-init.json');
+      const items = await res.json();
+      const initRes = await fetch('/init-stock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(items),
+      });
+      const data = await initRes.json();
+      if (data.success) {
+        showToast(`Stock initialisé — ${data.count} entrées créées`);
+        loadStockView();
+      } else throw new Error(data.error);
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // =============================================
   // INIT
   // =============================================
   loadMerch();
   loadConcerts();
   loadMembres();
+  loadStockView();
 </script>
 </body>
 </html>
