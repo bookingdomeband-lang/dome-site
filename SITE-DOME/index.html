@@ -1380,6 +1380,8 @@
       concerts_past_tag: 'Passé',
       concerts_photos_tag: 'Photos',
       concerts_tickets: 'Billets',
+      concerts_with: 'avec',
+      concerts_contact: 'Booking :',
       merch_label: 'Boutique',
       merch_title: 'Merchandising',
       merch_cup_type: 'Gobelet',
@@ -1425,6 +1427,8 @@
       concerts_past_tag: 'Past',
       concerts_photos_tag: 'Photos',
       concerts_tickets: 'Tickets',
+      concerts_with: 'with',
+      concerts_contact: 'Booking:',
       merch_label: 'Shop',
       merch_title: 'Merch',
       merch_cup_type: 'Cup',
@@ -1738,6 +1742,19 @@
     const today = new Date(); today.setHours(0,0,0,0);
     const upcoming = CONCERTS.filter(c => new Date(c.date) >= today);
     const past = CONCERTS.filter(c => new Date(c.date) < today).reverse();
+    const locale = currentLang === 'en' ? 'en-GB' : 'fr-FR';
+
+    // Format day and month from date field
+    function formatConcert(c) {
+      const d = new Date(c.date);
+      const day = c.day !== '—' ? c.day : '—';
+      const month = d.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+      // Capitalize first letter
+      const monthStr = month.charAt(0).toUpperCase() + month.slice(1);
+      // Translate "avec" → "with" in location
+      const location = (c.location || '').replace(/\bавec\b/g, tr('concerts_with')).replace(/\bavec\b/gi, tr('concerts_with'));
+      return { day, month: monthStr, location };
+    }
 
     const sep = (label) => `
       <div style="padding:1.25rem 0 0.5rem; border-bottom:1px solid var(--border);">
@@ -1750,10 +1767,11 @@
       html += `<div class="concert-item"><div class="concert-info" style="grid-column:1/-1"><p style="color:var(--text-dim);font-size:0.85rem;">${tr('concerts_more')}</p></div></div>`;
     } else {
       upcoming.forEach(c => {
+        const { day, month, location } = formatConcert(c);
         html += `
         <div class="concert-item">
-          <div class="concert-date">${c.day}<span>${c.month}</span></div>
-          <div class="concert-info"><h3>${c.venue}</h3><p>${c.location}</p></div>
+          <div class="concert-date">${day}<span>${month}</span></div>
+          <div class="concert-info"><h3>${c.venue}</h3><p>${location}</p></div>
           ${c.link ? `<a href="${c.link}" target="_blank" rel="noopener noreferrer" class="btn-tickets">${c.linkLabel || tr('concerts_tickets')}</a>` : ''}
         </div>`;
       });
@@ -1762,10 +1780,11 @@
     if (past.length > 0) {
       html += sep(tr('concerts_past_label'));
       past.forEach(c => {
+        const { day, month, location } = formatConcert(c);
         html += `
         <div class="concert-item concert-past" id="item-${c.id}" style="cursor:default;">
-          <div class="concert-date">${c.day}<span>${c.month}</span></div>
-          <div class="concert-info"><h3>${c.venue}</h3><p>${c.location}</p></div>
+          <div class="concert-date">${day}<span>${month}</span></div>
+          <div class="concert-info"><h3>${c.venue}</h3><p>${location}</p></div>
           <div style="display:flex;align-items:center;gap:0.75rem;">
             <span class="concert-tag sold-out">${tr('concerts_past_tag')}</span>
             <span class="concert-tag" id="photos-badge-${c.id}" style="border-color:var(--accent-dark);color:var(--accent-dark);display:none;">${tr('concerts_photos_tag')}</span>
@@ -1777,7 +1796,6 @@
     }
 
     grid.innerHTML = html;
-    // Recharger les galeries après re-render
     loadGalleries();
   }
   // renderConcerts() is called via loadDates() and applyTranslations()
