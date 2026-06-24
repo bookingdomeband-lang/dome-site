@@ -1,18 +1,15 @@
-// POST /init-stock — à appeler une seule fois depuis l'admin pour initialiser le KV
-// Protégé par Cloudflare Access (même URL pattern que /admin)
 export async function onRequestPost(context) {
   try {
     const kv = context.env.STOCK_KV;
-    if (!kv) {
-      return new Response(JSON.stringify({ error: 'KV non configuré' }), {
-        status: 500, headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    if (!kv) return new Response(JSON.stringify({ error: 'KV non configuré' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
 
     const items = await context.request.json();
+    // items: [{ id, size, color, qty }]
+    // color is optional, defaults to "_" (no color)
 
     for (const item of items) {
-      const key = `stock:${item.id}:${item.size}`;
+      const color = item.color || '_';
+      const key = `stock:${item.id}:${item.size}:${color}`;
       await kv.put(key, String(item.qty));
     }
 
@@ -20,8 +17,6 @@ export async function onRequestPost(context) {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500, headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
