@@ -12,12 +12,12 @@
       {
         "name_fr": "Noir",
         "name_en": "Black",
-        "image": null
+        "image": "merch/tshirt-noir.png"
       },
       {
         "name_fr": "Blanc",
         "name_en": "White",
-        "image": null
+        "image": "merch/tshirt-blanc.png"
       }
     ]
   },
