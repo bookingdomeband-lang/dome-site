@@ -22,9 +22,9 @@ export async function onRequestPost(context) {
       const name = item.name + (item.size ? ` — Taille ${item.size}` : '');
       params.append(`line_items[${i}][price_data][currency]`, 'eur');
       params.append(`line_items[${i}][price_data][product_data][name]`, name);
-      // Store product id and size in metadata for webhook stock decrement
       params.append(`line_items[${i}][price_data][product_data][metadata][product_id]`, item.id || '');
       params.append(`line_items[${i}][price_data][product_data][metadata][size]`, item.size || '—');
+      params.append(`line_items[${i}][price_data][product_data][metadata][color]`, item.color || '_');
       params.append(`line_items[${i}][price_data][unit_amount]`, String(item.price * 100));
       params.append(`line_items[${i}][quantity]`, String(item.qty));
     });
