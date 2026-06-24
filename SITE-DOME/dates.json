@@ -1,0 +1,42 @@
+[
+  {
+    "id": "nirvana",
+    "date": "2025-06-06",
+    "day": "06",
+    "month": "Juin 2025",
+    "venue": "Nirvana Pub",
+    "location": "Nancy — avec The Soul of Bushido & Insomnia",
+    "link": null,
+    "linkLabel": null
+  },
+  {
+    "id": "demilune",
+    "date": "2025-08-01",
+    "day": "—",
+    "month": "Août 2025",
+    "venue": "Festival Demi-Lune",
+    "location": "Kolbsheim — avec Macrowave",
+    "link": null,
+    "linkLabel": null
+  },
+  {
+    "id": "shamrock",
+    "date": "2025-09-01",
+    "day": "—",
+    "month": "Sept 2025",
+    "venue": "Shamrock",
+    "location": "Thionville",
+    "link": null,
+    "linkLabel": null
+  },
+  {
+    "id": "metalenseille",
+    "date": "2026-12-05",
+    "day": "05",
+    "month": "Déc 2026",
+    "venue": "Festival Metal en Seille",
+    "location": "Nomeny",
+    "link": "https://www.facebook.com/events/1516120770009713?locale=fr_FR",
+    "linkLabel": "Info"
+  }
+]

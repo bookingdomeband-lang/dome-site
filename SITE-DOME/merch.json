@@ -1,0 +1,62 @@
+[
+  {
+    "id": "tshirt-beyond",
+    "name_fr": "DOME — Beyond the Scars",
+    "name_en": "DOME — Beyond the Scars",
+    "type_fr": "T-shirt",
+    "type_en": "T-shirt",
+    "price": 25,
+    "image": "tshirt-beyond.jpg",
+    "has_sizes": true
+  },
+  {
+    "id": "tshirt-tour",
+    "name_fr": "DOME — Tour 2025",
+    "name_en": "DOME — Tour 2025",
+    "type_fr": "T-shirt",
+    "type_en": "T-shirt",
+    "price": 25,
+    "image": null,
+    "has_sizes": true
+  },
+  {
+    "id": "hoodie-zip",
+    "name_fr": "DOME — Logo Zip",
+    "name_en": "DOME — Logo Zip",
+    "type_fr": "Hoodie",
+    "type_en": "Hoodie",
+    "price": 45,
+    "image": null,
+    "has_sizes": true
+  },
+  {
+    "id": "hoodie-oversize",
+    "name_fr": "DOME — Oversize Noir",
+    "name_en": "DOME — Oversize Black",
+    "type_fr": "Hoodie",
+    "type_en": "Hoodie",
+    "price": 45,
+    "image": null,
+    "has_sizes": true
+  },
+  {
+    "id": "gobelet",
+    "name_fr": "DOME — Gobelet Réutilisable",
+    "name_en": "DOME — Reusable Cup",
+    "type_fr": "Gobelet",
+    "type_en": "Cup",
+    "price": 8,
+    "image": null,
+    "has_sizes": false
+  },
+  {
+    "id": "gobelet-pack",
+    "name_fr": "Pack × 2 Gobelets",
+    "name_en": "Pack × 2 Cups",
+    "type_fr": "Gobelet",
+    "type_en": "Cup",
+    "price": 14,
+    "image": null,
+    "has_sizes": false
+  }
+]

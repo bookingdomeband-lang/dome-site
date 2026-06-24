@@ -1,0 +1,46 @@
+[
+  {
+    "id": "franck",
+    "name": "Franck",
+    "role_fr": "Chant",
+    "role_en": "Vocals",
+    "i18n_key": "role_vocals",
+    "photo": null
+  },
+  {
+    "id": "maxime",
+    "name": "Maxime",
+    "role_fr": "Guitare",
+    "role_en": "Guitar",
+    "i18n_key": "role_guitar",
+    "photo": "maxime.jpg",
+    "photo_scale": "2.2",
+    "photo_origin_y": "22"
+  },
+  {
+    "id": "anthony",
+    "name": "Anthony",
+    "role_fr": "Guitare",
+    "role_en": "Guitar",
+    "i18n_key": "role_guitar",
+    "photo": "anthony.jpg",
+    "photo_scale": "3.5",
+    "photo_origin_y": "14"
+  },
+  {
+    "id": "sebastien",
+    "name": "Sébastien",
+    "role_fr": "Basse",
+    "role_en": "Bass",
+    "i18n_key": "role_bass",
+    "photo": null
+  },
+  {
+    "id": "khaled",
+    "name": "Khaled",
+    "role_fr": "Batterie",
+    "role_en": "Drums",
+    "i18n_key": "role_drums",
+    "photo": null
+  }
+]
