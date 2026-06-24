@@ -719,7 +719,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
 
   async function uploadImageIfNeeded() {
     if (!pendingImageFile) return null;
-    return uploadFile(pendingImageFile);
+    return uploadFile(pendingImageFile, 'merch');
   }
 
   // =============================================
@@ -819,7 +819,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       try {
         showToast('Upload de l\'image en cours...');
         const uploadedFilename = await uploadImageIfNeeded();
-        product.image = uploadedFilename;
+        product.image = uploadedFilename ? `merch/${uploadedFilename}` : product.image;
         pendingImageFile = null;
       } catch(e) { showToast('Erreur upload image : ' + e.message, 'error'); return; }
     }
@@ -828,9 +828,9 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     for (const [idx, file] of Object.entries(pendingColorFiles)) {
       try {
         showToast(`Upload photo couleur ${parseInt(idx)+1}...`);
-        const filename = await uploadFile(file);
+        const filename = await uploadFile(file, 'merch');
         const colorIdx = parseInt(idx);
-        if (product.colors[colorIdx]) product.colors[colorIdx].image = filename;
+        if (product.colors[colorIdx]) product.colors[colorIdx].image = `merch/${filename}`;
       } catch(e) { showToast('Erreur upload couleur : ' + e.message, 'error'); return; }
     }
     pendingColorFiles = {};
@@ -1050,7 +1050,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     if (pendingMembreFile) {
       try {
         showToast('Upload de la photo en cours...');
-        membre.photo = await uploadFile(pendingMembreFile);
+        membre.photo = `membres/${await uploadFile(pendingMembreFile, 'membres')}`;
         pendingMembreFile = null;
       } catch(e) { showToast('Erreur upload : ' + e.message, 'error'); return; }
     }
