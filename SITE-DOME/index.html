@@ -1500,11 +1500,18 @@
     grid.querySelectorAll('.merch-item').forEach(item => {
       const productId = item.dataset.productId;
       if (!productId || !stockData[productId]) return;
-      const sizes = stockData[productId];
+      const productStock = stockData[productId];
+
+      // Get active color (or "_" if no color)
+      const activeColorBtn = item.querySelector('.color-btn.active');
+      const activeColor = activeColorBtn ? activeColorBtn.dataset.color : '_';
 
       // Update size buttons
       item.querySelectorAll('.size-btn').forEach(btn => {
-        const qty = sizes[btn.dataset.size] ?? 0;
+        btn.classList.remove('sold-out');
+        btn.disabled = false;
+        const sizeStock = productStock[btn.dataset.size];
+        const qty = sizeStock ? (sizeStock[activeColor] ?? sizeStock['_'] ?? 0) : 0;
         if (qty <= 0) {
           btn.disabled = true;
           btn.classList.add('sold-out');
@@ -1515,20 +1522,29 @@
       // For products without sizes
       const addBtn = item.querySelector('.btn-add');
       if (addBtn && addBtn.dataset.noSize === 'true') {
-        const qty = sizes['—'] ?? 0;
+        const sizeStock = productStock['—'];
+        const qty = sizeStock ? (sizeStock[activeColor] ?? sizeStock['_'] ?? 0) : 0;
         if (qty <= 0) {
           addBtn.disabled = true;
-          addBtn.textContent = tr ? tr('stock_out') : 'Épuisé';
+          addBtn.textContent = tr('stock_out');
           addBtn.style.opacity = '0.5';
           addBtn.style.cursor = 'not-allowed';
+        } else {
+          addBtn.disabled = false;
+          addBtn.textContent = tr('merch_add');
+          addBtn.style.opacity = '';
+          addBtn.style.cursor = '';
         }
       }
 
-      // Show low stock warning (3 or less)
-      const totalStock = Object.values(sizes).reduce((a, b) => a + b, 0);
+      // Low stock warning
+      const allQtys = Object.values(productStock).flatMap(s => Object.values(s));
+      const total = allQtys.reduce((a, b) => a + b, 0);
       const priceEl = item.querySelector('.merch-price');
-      if (priceEl && totalStock > 0 && totalStock <= 3) {
-        priceEl.insertAdjacentHTML('afterend', `<p style="font-size:0.65rem;color:var(--red);letter-spacing:0.1em;margin-top:4px;">Plus que ${totalStock} en stock</p>`);
+      const existing = item.querySelector('.stock-warning');
+      if (existing) existing.remove();
+      if (priceEl && total > 0 && total <= 3) {
+        priceEl.insertAdjacentHTML('afterend', `<p class="stock-warning" style="font-size:0.65rem;color:var(--red);letter-spacing:0.1em;margin-top:4px;">Plus que ${total} en stock</p>`);
       }
     });
   }
@@ -1605,6 +1621,8 @@
         if (imgEl && btn.dataset.image) imgEl.src = btn.dataset.image;
         const addBtn = item.querySelector('.btn-add');
         if (addBtn) addBtn.dataset.color = btn.dataset.color;
+        // Re-apply stock for new color
+        if (Object.keys(stockData).length) applyStockToMerch();
       });
       // Set initial color on first button
       if (btn.classList.contains('active')) {
