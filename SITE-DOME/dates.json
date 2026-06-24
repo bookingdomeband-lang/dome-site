@@ -48,5 +48,15 @@
     "location": "Metz - avec Sidilarsen, Chemical Sweet Kid & Do Or Die",
     "link": "https://hauntingthechapelfestival.fr/groupes/",
     "linkLabel": "Info"
+  },
+  {
+    "id": "nirvana2",
+    "date": "2026-04-18",
+    "day": "18",
+    "month": "Avril 2026",
+    "venue": "Nirvana Pub",
+    "location": "Nancy - avec Inward & Prosaic",
+    "link": null,
+    "linkLabel": null
   }
 ]
