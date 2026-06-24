@@ -459,6 +459,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
         <input type="file" id="concert-photos-file" accept="image/*" multiple style="display:none;" onchange="previewConcertPhotos(this)">
         <button type="button" class="btn btn-secondary" style="width:100%;margin-bottom:8px;" onclick="document.getElementById('concert-photos-file').click()">+ Ajouter des photos</button>
         <div id="concert-photos-preview" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        <div id="concert-existing-photos" style="margin-top:8px;"></div>
         <p style="font-size:0.65rem;color:var(--text-dim);margin-top:6px;letter-spacing:0.05em;">Les photos seront uploadées dans concerts/{identifiant}/. Compressez-les au préalable (squoosh.app).</p>
       </div>
     </div>
@@ -804,7 +805,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       </table>`;
   }
 
-  function openConcertForm(concert = null) {
+  async function openConcertForm(concert = null) {
     document.getElementById('concert-form-title').textContent = concert ? 'Modifier la date' : 'Ajouter une date';
     document.getElementById('concert-edit-id').value = concert ? state.concerts.data.indexOf(concert).toString() : '';
     document.getElementById('concert-id-field').value = concert?.id || '';
@@ -818,11 +819,9 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     pendingConcertFiles = [];
     document.getElementById('concert-photos-preview').innerHTML = '';
     document.getElementById('concert-photos-file').value = '';
-    // Show existing photo if editing
-    if (concert?.photo) {
-      document.getElementById('membre-preview-img').src = concert.photo;
-      document.getElementById('membre-image-preview').style.display = 'block';
-    }
+    document.getElementById('concert-existing-photos').innerHTML = '';
+    // Load existing photos if editing
+    if (concert?.id) await loadExistingConcertPhotos(concert.id);
     document.getElementById('concert-form-overlay').classList.add('open');
   }
 
@@ -996,8 +995,47 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     overlay.addEventListener('click', e => { if (e.target === overlay) closeForms(); });
   });
 
+  async function loadExistingConcertPhotos(concertId) {
+    const container = document.getElementById('concert-existing-photos');
+    try {
+      const res = await fetch('/concerts.json');
+      const data = await res.json();
+      const photos = data[concertId] || [];
+      if (!photos.length) return;
+
+      container.innerHTML = `
+        <p style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">Photos existantes</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="existing-photos-grid">
+          ${photos.map(f => `
+            <div style="position:relative;" id="photo-wrap-${concertId}-${f.replace(/\./g,'-')}">
+              <img src="concerts/${concertId}/${f}" style="width:80px;height:60px;object-fit:cover;border:1px solid var(--border);display:block;">
+              <button onclick="deleteConcertPhoto('${concertId}','${f}')"
+                style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.7);border:none;color:white;cursor:pointer;font-size:0.65rem;padding:2px 5px;line-height:1;">✕</button>
+              <p style="font-size:0.5rem;color:var(--text-dim);text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f}</p>
+            </div>`).join('')}
+        </div>`;
+    } catch(e) { /* concerts.json not found or empty */ }
+  }
+
+  async function deleteConcertPhoto(concertId, filename) {
+    if (!confirm(`Supprimer "${filename}" ?`)) return;
+    try {
+      const res = await fetch('/delete-file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filepath: `concerts/${concertId}/${filename}` }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Remove thumbnail from UI
+        const wrap = document.getElementById(`photo-wrap-${concertId}-${filename.replace(/\./g,'-')}`);
+        if (wrap) wrap.remove();
+        showToast('Photo supprimée — redéploiement en cours');
+      } else throw new Error(data.error);
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
   // =============================================
-  // STOCK
   // =============================================
   async function loadStockView() {
     const el = document.getElementById('stock-list');

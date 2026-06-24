@@ -418,15 +418,38 @@
   }
 
   .size-btn.sold-out {
-    opacity: 0.4;
+    opacity: 0.45;
     cursor: not-allowed;
-    text-decoration: line-through;
+    position: relative;
+  }
+
+  .size-btn.sold-out::before,
+  .size-btn.sold-out::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .size-btn.sold-out::before {
+    background: linear-gradient(
+      to bottom right,
+      transparent calc(50% - 0.5px),
+      currentColor calc(50% - 0.5px),
+      currentColor calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    );
   }
 
   .size-btn.sold-out::after {
-    content: ' ✕';
-    font-size: 0.5rem;
-    opacity: 0.6;
+    background: linear-gradient(
+      to top right,
+      transparent calc(50% - 0.5px),
+      currentColor calc(50% - 0.5px),
+      currentColor calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    );
   }
 
   .size-btn:hover, .size-btn.active {
