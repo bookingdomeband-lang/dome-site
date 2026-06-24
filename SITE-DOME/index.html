@@ -1404,6 +1404,8 @@
       gallery_placeholder: 'Photos à venir',
       stock_out: 'Épuisé',
       stock_low: 'Plus que',
+      stock_low_suffix: 'en stock',
+      stock_last_size: 'Dernier en taille',
     },
     en: {
       nav_band: 'Band',
@@ -1449,6 +1451,8 @@
       toast_size: 'Please select a size',
       stock_out: 'Sold out',
       stock_low: 'Only',
+      stock_low_suffix: 'left',
+      stock_last_size: 'Last one in size',
       footer_copy: '© 2025 DOME BAND',
       gallery_placeholder: 'Photos coming soon',
     }
@@ -1510,7 +1514,13 @@
       const activeColorBtn = item.querySelector('.color-btn.active');
       const activeColor = activeColorBtn ? activeColorBtn.dataset.color : '_';
 
-      // Update size buttons
+      // Remove existing warnings
+      item.querySelectorAll('.stock-warning').forEach(w => w.remove());
+
+      // Update size buttons + collect low stock info
+      const lowSizes = [];
+      const lastSizes = [];
+
       item.querySelectorAll('.size-btn').forEach(btn => {
         btn.classList.remove('sold-out');
         btn.disabled = false;
@@ -1520,6 +1530,10 @@
           btn.disabled = true;
           btn.classList.add('sold-out');
           btn.title = tr('stock_out');
+        } else if (qty === 1) {
+          lastSizes.push(btn.dataset.size);
+        } else if (qty <= 3) {
+          lowSizes.push({ size: btn.dataset.size, qty });
         }
       });
 
@@ -1538,17 +1552,31 @@
           addBtn.textContent = tr('merch_add');
           addBtn.style.opacity = '';
           addBtn.style.cursor = '';
+          // Low stock warning for no-size products
+          if (qty === 1) {
+            addBtn.insertAdjacentHTML('afterend',
+              `<p class="stock-warning" style="font-size:0.65rem;color:var(--red);letter-spacing:0.05em;margin-top:4px;">${tr('stock_low')} 1 ${tr('stock_low_suffix')}</p>`);
+          } else if (qty <= 3) {
+            addBtn.insertAdjacentHTML('afterend',
+              `<p class="stock-warning" style="font-size:0.65rem;color:#e0a020;letter-spacing:0.05em;margin-top:4px;">${tr('stock_low')} ${qty} ${tr('stock_low_suffix')}</p>`);
+          }
         }
+        return;
       }
 
-      // Low stock warning
-      const allQtys = Object.values(productStock).flatMap(s => Object.values(s));
-      const total = allQtys.reduce((a, b) => a + b, 0);
-      const priceEl = item.querySelector('.merch-price');
-      const existing = item.querySelector('.stock-warning');
-      if (existing) existing.remove();
-      if (priceEl && total > 0 && total <= 3) {
-        priceEl.insertAdjacentHTML('afterend', `<p class="stock-warning" style="font-size:0.65rem;color:var(--red);letter-spacing:0.1em;margin-top:4px;">Plus que ${total} en stock</p>`);
+      // Insert size-specific warnings below the size selector
+      const sizeSelector = item.querySelector('.size-selector');
+      if (!sizeSelector) return;
+
+      if (lastSizes.length > 0) {
+        sizeSelector.insertAdjacentHTML('afterend',
+          `<p class="stock-warning" style="font-size:0.65rem;color:var(--red);letter-spacing:0.05em;margin-top:4px;">
+            ${lastSizes.map(s => `${tr('stock_last_size')} ${s}`).join(' · ')}
+          </p>`);
+      } else if (lowSizes.length > 0) {
+        const msg = lowSizes.map(({ size, qty }) => `${tr('stock_low')} ${qty} en ${size}`).join(' · ');
+        sizeSelector.insertAdjacentHTML('afterend',
+          `<p class="stock-warning" style="font-size:0.65rem;color:#e0a020;letter-spacing:0.05em;margin-top:4px;">${msg}</p>`);
       }
     });
   }
