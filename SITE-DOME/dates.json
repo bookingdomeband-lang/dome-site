@@ -38,5 +38,15 @@
     "location": "Nomeny",
     "link": "https://www.facebook.com/events/1516120770009713?locale=fr_FR",
     "linkLabel": "Info"
+  },
+  {
+    "id": "haunting",
+    "date": "2026-02-13",
+    "day": "13",
+    "month": "Fév 2026",
+    "venue": "Haunting The Chapel",
+    "location": "Metz - avec Sidilarsen, Chemical Sweet Kid & Do Or Die",
+    "link": "https://hauntingthechapelfestival.fr/groupes/",
+    "linkLabel": "Info"
   }
 ]
