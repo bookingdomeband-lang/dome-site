@@ -296,6 +296,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   <button class="tab" onclick="switchTab('concerts')">Concerts</button>
   <button class="tab" onclick="switchTab('membres')">Membres</button>
   <button class="tab" onclick="switchTab('stock')">Stock</button>
+  <button class="tab" onclick="switchTab('commandes')">Commandes</button>
 </div>
 
 <main>
@@ -343,6 +344,17 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       Le stock est mis à jour automatiquement par Stripe après chaque commande. Vous pouvez modifier manuellement une quantité en cliquant sur la valeur.
     </p>
     <div id="stock-list"><div class="loading">Chargement...</div></div>
+  </div>
+  <!-- ===== COMMANDES ===== -->
+  <div class="tab-content" id="tab-commandes">
+    <div class="section-header">
+      <h2>Commandes récentes</h2>
+      <button class="btn btn-secondary" onclick="loadOrders()">↺ Rafraîchir</button>
+    </div>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1.5rem;line-height:1.7;">
+      Les 50 dernières commandes confirmées. Données en temps réel depuis Stripe.
+    </p>
+    <div id="orders-list"><div class="loading">Chargement...</div></div>
   </div>
 
 </main>
@@ -1324,19 +1336,78 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   }
 
   // =============================================
+  // COMMANDES
+  // =============================================
+  async function loadOrders() {
+    const el = document.getElementById('orders-list');
+    el.innerHTML = '<div class="loading">Chargement depuis Stripe...</div>';
+    try {
+      const res = await fetch('/get-orders');
+      const orders = await res.json();
+      if (orders.error) throw new Error(orders.error);
+
+      if (!orders.length) {
+        el.innerHTML = '<div class="empty-state">Aucune commande confirmée pour le moment.</div>';
+        return;
+      }
+
+      el.innerHTML = orders.map(o => {
+        const date = new Date(o.date * 1000).toLocaleDateString('fr-FR', {
+          day: '2-digit', month: '2-digit', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
+        const amount = (o.amount / 100).toFixed(2) + ' €';
+        const items = o.items.map(i =>
+          `<span style="display:block;font-size:0.75rem;color:var(--text-muted);">
+            ${i.qty}× ${i.name} — ${(i.amount/100).toFixed(2)} €
+          </span>`
+        ).join('');
+
+        return `<div style="border:1px solid var(--border);background:var(--near-black);padding:1.25rem;margin-bottom:1px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:1rem;align-items:start;">
+            <div>
+              <p style="font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;">Date</p>
+              <p style="font-size:0.85rem;color:var(--text);">${date}</p>
+            </div>
+            <div>
+              <p style="font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;">Client</p>
+              <p style="font-size:0.85rem;color:var(--text);">${o.customer}</p>
+              <p style="font-size:0.72rem;color:var(--text-dim);">${o.email}</p>
+            </div>
+            <div>
+              <p style="font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;">Livraison</p>
+              <p style="font-size:0.75rem;color:var(--text-muted);">${o.shipping}</p>
+            </div>
+            <div style="text-align:right;">
+              <p style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--accent);letter-spacing:0.05em;">${amount}</p>
+            </div>
+          </div>
+          <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);">
+            <p style="font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">Articles</p>
+            ${items}
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      el.innerHTML = `<div class="empty-state">Erreur : ${e.message}</div>`;
+    }
+  }
+
+  // =============================================
   // INIT
   // =============================================
   loadMerch();
   loadConcerts();
   loadMembres();
   loadStockView();
+  loadOrders();
 
   // Auto-refresh stock every 30 seconds when Stock tab is visible
   setInterval(() => {
     const stockTab = document.getElementById('tab-stock');
-    if (stockTab && stockTab.classList.contains('active')) {
-      loadStockView();
-    }
+    if (stockTab && stockTab.classList.contains('active')) loadStockView();
+    const commandesTab = document.getElementById('tab-commandes');
+    if (commandesTab && commandesTab.classList.contains('active')) loadOrders();
   }, 30000);
 </script>
 </body>
