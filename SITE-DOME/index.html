@@ -1510,9 +1510,9 @@
       if (!productId || !stockData[productId]) return;
       const productStock = stockData[productId];
 
-      // Get active color (or "_" if no color)
+      // Get active color key (always name_fr, regardless of language)
       const activeColorBtn = item.querySelector('.color-btn.active');
-      const activeColor = activeColorBtn ? activeColorBtn.dataset.color : '_';
+      const activeColor = activeColorBtn ? (activeColorBtn.dataset.colorKey || activeColorBtn.dataset.color) : '_';
 
       // Remove existing warnings
       item.querySelectorAll('.stock-warning').forEach(w => w.remove());
@@ -1569,12 +1569,15 @@
       if (!sizeSelector) return;
 
       if (lastSizes.length > 0) {
+        const sizesStr = lastSizes.join(', ');
         sizeSelector.insertAdjacentHTML('afterend',
           `<p class="stock-warning" style="font-size:0.65rem;color:var(--red);letter-spacing:0.05em;margin-top:4px;">
-            ${lastSizes.map(s => `${tr('stock_last_size')} ${s}`).join(' · ')}
+            ${tr('stock_last_size')} ${sizesStr}
           </p>`);
       } else if (lowSizes.length > 0) {
-        const msg = lowSizes.map(({ size, qty }) => `${tr('stock_low')} ${qty} en ${size}`).join(' · ');
+        const msg = lowSizes.map(({ size, qty }) =>
+          `${tr('stock_low')} ${qty} ${currentLang === 'en' ? 'in' : 'en'} ${size}`
+        ).join(' · ');
         sizeSelector.insertAdjacentHTML('afterend',
           `<p class="stock-warning" style="font-size:0.65rem;color:#e0a020;letter-spacing:0.05em;margin-top:4px;">${msg}</p>`);
       }
@@ -1617,6 +1620,7 @@
             const cname = currentLang === 'en' ? (c.name_en || c.name_fr) : c.name_fr;
             return `<button class="color-btn${i === 0 ? ' active' : ''}"
               data-color="${cname}"
+              data-color-key="${c.name_fr}"
               data-image="${c.image || ''}"
               >${cname}</button>`;
           }).join('')}
@@ -1652,7 +1656,9 @@
         const imgEl = item.querySelector(`#img-${pid}`);
         if (imgEl && btn.dataset.image) imgEl.src = btn.dataset.image;
         const addBtn = item.querySelector('.btn-add');
-        if (addBtn) addBtn.dataset.color = btn.dataset.color;
+        if (addBtn) {
+          addBtn.dataset.color = btn.dataset.colorKey || btn.dataset.color;
+        }
         // Re-apply stock for new color
         if (Object.keys(stockData).length) applyStockToMerch();
       });
