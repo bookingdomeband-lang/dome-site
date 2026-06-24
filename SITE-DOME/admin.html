@@ -401,6 +401,12 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
           <label for="merch-has-sizes">Produit avec tailles (S, M, L, XL, XXL)</label>
         </div>
       </div>
+
+      <div class="form-row">
+        <label>Couleurs disponibles (optionnel)</label>
+        <div id="merch-colors-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;"></div>
+        <button type="button" class="btn btn-secondary" style="width:100%;" onclick="addColorField()">+ Ajouter une couleur</button>
+      </div>
     </div>
     <div class="form-footer">
       <button class="btn btn-secondary" onclick="closeForms()">Annuler</button>
@@ -577,6 +583,69 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     setTimeout(() => el.classList.remove('show'), 3000);
   }
 
+  // COLOR MANAGEMENT
+  let pendingColorFiles = {};
+
+  function addColorField(color = null, index = null) {
+    const list = document.getElementById('merch-colors-list');
+    const idx = index !== null ? index : list.children.length;
+    const div = document.createElement('div');
+    div.id = `color-row-${idx}`;
+    div.style.cssText = 'background:var(--black);border:1px solid var(--border);padding:0.75rem;display:flex;flex-direction:column;gap:8px;';
+    div.innerHTML = `
+      <div style="display:flex;gap:8px;align-items:flex-start;">
+        <div style="flex:1;">
+          <label style="font-size:0.55rem;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:4px;">Nom FR</label>
+          <input type="text" placeholder="Noir" value="${color?.name_fr||''}"
+            style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--text);padding:6px 8px;font-size:0.8rem;"
+            id="color-name-fr-${idx}">
+        </div>
+        <div style="flex:1;">
+          <label style="font-size:0.55rem;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:4px;">Nom EN</label>
+          <input type="text" placeholder="Black" value="${color?.name_en||''}"
+            style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--text);padding:6px 8px;font-size:0.8rem;"
+            id="color-name-en-${idx}">
+        </div>
+        <button onclick="document.getElementById('color-row-${idx}').remove()"
+          style="background:none;border:1px solid var(--red);color:var(--red);cursor:pointer;padding:6px 10px;font-size:0.7rem;align-self:flex-end;">✕</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="file" id="color-file-${idx}" accept="image/*" style="display:none;" onchange="previewColorImage(this,${idx})">
+        <input type="text" placeholder="photo-noir.jpg" value="${color?.image||''}"
+          style="flex:1;background:var(--dark);border:1px solid var(--border);color:var(--text);padding:6px 8px;font-size:0.8rem;"
+          id="color-image-${idx}">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('color-file-${idx}').click()">Parcourir</button>
+        ${color?.image ? `<img src="${color.image}" id="color-preview-${idx}" style="width:40px;height:30px;object-fit:cover;border:1px solid var(--border);">` : `<div id="color-preview-${idx}"></div>`}
+      </div>`;
+    list.appendChild(div);
+  }
+
+  function previewColorImage(input, idx) {
+    const file = input.files[0];
+    if (!file) return;
+    pendingColorFiles[idx] = file;
+    document.getElementById(`color-image-${idx}`).value = file.name;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const preview = document.getElementById(`color-preview-${idx}`);
+      if (preview) preview.outerHTML = `<img src="${e.target.result}" id="color-preview-${idx}" style="width:40px;height:30px;object-fit:cover;border:1px solid var(--border);">`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function getColorsFromForm() {
+    const list = document.getElementById('merch-colors-list');
+    const colors = [];
+    for (const row of list.children) {
+      const idx = row.id.replace('color-row-', '');
+      const name_fr = document.getElementById(`color-name-fr-${idx}`)?.value.trim();
+      const name_en = document.getElementById(`color-name-en-${idx}`)?.value.trim();
+      const image = document.getElementById(`color-image-${idx}`)?.value.trim() || null;
+      if (name_fr) colors.push({ name_fr, name_en: name_en || name_fr, image });
+    }
+    return colors;
+  }
+
   // IMAGE UPLOAD — MEMBRE
   let pendingMembreFile = null;
 
@@ -704,8 +773,14 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     }
     document.getElementById('merch-has-sizes').checked = product ? product.has_sizes : true;
     pendingImageFile = null;
+    pendingColorFiles = {};
+    document.getElementById('merch-colors-list').innerHTML = '';
     document.getElementById('merch-image-preview').style.display = 'none';
     document.getElementById('merch-image-file').value = '';
+    // Prepopulate existing colors
+    if (product?.colors?.length) {
+      product.colors.forEach((c, i) => addColorField(c, i));
+    }
     document.getElementById('merch-form-overlay').classList.add('open');
   }
 
@@ -734,22 +809,31 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       price: parseFloat(document.getElementById('merch-price').value),
       image: document.getElementById('merch-image').value.trim() || null,
       has_sizes: document.getElementById('merch-has-sizes').checked,
+      colors: getColorsFromForm(),
     };
 
     if (!product.name_fr || !product.price) { showToast('Nom et prix obligatoires', 'error'); return; }
 
-    // Upload image if a file was selected
+    // Upload main image if selected
     if (pendingImageFile) {
       try {
         showToast('Upload de l\'image en cours...');
         const uploadedFilename = await uploadImageIfNeeded();
         product.image = uploadedFilename;
         pendingImageFile = null;
-      } catch(e) {
-        showToast('Erreur upload image : ' + e.message, 'error');
-        return;
-      }
+      } catch(e) { showToast('Erreur upload image : ' + e.message, 'error'); return; }
     }
+
+    // Upload color photos if any
+    for (const [idx, file] of Object.entries(pendingColorFiles)) {
+      try {
+        showToast(`Upload photo couleur ${parseInt(idx)+1}...`);
+        const filename = await uploadFile(file);
+        const colorIdx = parseInt(idx);
+        if (product.colors[colorIdx]) product.colors[colorIdx].image = filename;
+      } catch(e) { showToast('Erreur upload couleur : ' + e.message, 'error'); return; }
+    }
+    pendingColorFiles = {};
 
     const existing = state.merch.data.findIndex(p => p.id === id);
     if (existing >= 0) state.merch.data[existing] = product;

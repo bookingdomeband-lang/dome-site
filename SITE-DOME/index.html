@@ -394,6 +394,30 @@
     color: var(--accent);
   }
 
+  /* COLOR SELECTOR */
+  .color-selector {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+  }
+
+  .color-btn {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .color-btn:hover, .color-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
   /* SIZE SELECTOR */
   .size-selector {
     display: none;
@@ -1536,8 +1560,22 @@
           <button class="size-btn" data-size="XL">XL</button>
           <button class="size-btn" data-size="XXL">XXL</button>
         </div>` : '';
-      const img = p.image
-        ? `<img src="${p.image}" alt="${name}" class="merch-img">`
+      const hasColors = p.colors && p.colors.length > 0;
+      const defaultImage = hasColors ? p.colors[0].image : p.image;
+
+      const colorSelector = hasColors ? `
+        <div class="color-selector" data-id="${p.id}">
+          ${p.colors.map((c, i) => {
+            const cname = currentLang === 'en' ? (c.name_en || c.name_fr) : c.name_fr;
+            return `<button class="color-btn${i === 0 ? ' active' : ''}"
+              data-color="${cname}"
+              data-image="${c.image || ''}"
+              >${cname}</button>`;
+          }).join('')}
+        </div>` : '';
+
+      const img = defaultImage
+        ? `<img src="${defaultImage}" alt="${name}" class="merch-img" id="img-${p.id}">`
         : `<div class="merch-img-placeholder"><svg width="80" height="80" viewBox="0 0 80 80" fill="none"><path d="M10 20 L25 10 L40 18 L55 10 L70 20 L60 28 L60 70 L20 70 L20 28 Z" stroke="white" stroke-width="1.5" fill="none"/></svg></div>`;
       return `
         <div class="merch-item" data-product-id="${p.id}">
@@ -1545,6 +1583,7 @@
           <div class="merch-info">
             <p class="merch-type">${type}</p>
             <p class="merch-name">${name}</p>
+            ${colorSelector}
             ${sizes}
             <div class="merch-bottom">
               <span class="merch-price">${p.price} €</span>
@@ -1553,6 +1592,26 @@
           </div>
         </div>`;
     }).join('');
+
+    // Bind color buttons
+    grid.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const selector = btn.closest('.color-selector');
+        selector.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const item = btn.closest('.merch-item');
+        const pid = item.dataset.productId;
+        const imgEl = item.querySelector(`#img-${pid}`);
+        if (imgEl && btn.dataset.image) imgEl.src = btn.dataset.image;
+        const addBtn = item.querySelector('.btn-add');
+        if (addBtn) addBtn.dataset.color = btn.dataset.color;
+      });
+      // Set initial color on first button
+      if (btn.classList.contains('active')) {
+        const addBtn = btn.closest('.merch-item')?.querySelector('.btn-add');
+        if (addBtn) addBtn.dataset.color = btn.dataset.color;
+      }
+    });
 
     // Rebind size selectors and add-to-cart buttons
     grid.querySelectorAll('.size-btn').forEach(btn => {
@@ -1576,13 +1635,15 @@
           }
           const active = sizeSelector.querySelector('.size-btn.active');
           if (!active) { showToast(tr('toast_size')); return; }
-          const existing = cart.find(i => i.name === btn.dataset.name && i.size === active.dataset.size);
+          const existing = cart.find(i => i.name === btn.dataset.name && i.size === active.dataset.size && i.color === (btn.dataset.color || null));
+          const cartName = btn.dataset.color ? `${btn.dataset.name} (${btn.dataset.color})` : btn.dataset.name;
           if (existing) existing.qty++;
-          else cart.push({ id: btn.dataset.id, name: btn.dataset.name, price: parseInt(btn.dataset.price), size: active.dataset.size, qty: 1 });
+          else cart.push({ id: btn.dataset.id, name: cartName, price: parseInt(btn.dataset.price), size: active.dataset.size, color: btn.dataset.color || null, qty: 1 });
         } else {
-          const existing = cart.find(i => i.name === btn.dataset.name);
+          const cartName = btn.dataset.color ? `${btn.dataset.name} (${btn.dataset.color})` : btn.dataset.name;
+          const existing = cart.find(i => i.name === cartName);
           if (existing) existing.qty++;
-          else cart.push({ id: btn.dataset.id, name: btn.dataset.name, price: parseInt(btn.dataset.price), size: null, qty: 1 });
+          else cart.push({ id: btn.dataset.id, name: cartName, price: parseInt(btn.dataset.price), size: null, color: btn.dataset.color || null, qty: 1 });
         }
         updateCartUI();
         showToast(tr('toast_added'));
