@@ -18,6 +18,16 @@ export async function onRequestPost(context) {
       params.append(`shipping_address_collection[allowed_countries][${i}]`, c);
     });
 
+    // Frais de port fixes — 5€
+    params.append('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
+    params.append('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '500');
+    params.append('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'eur');
+    params.append('shipping_options[0][shipping_rate_data][display_name]', 'Livraison standard');
+    params.append('shipping_options[0][shipping_rate_data][delivery_estimate][minimum][unit]', 'business_day');
+    params.append('shipping_options[0][shipping_rate_data][delivery_estimate][minimum][value]', '3');
+    params.append('shipping_options[0][shipping_rate_data][delivery_estimate][maximum][unit]', 'business_day');
+    params.append('shipping_options[0][shipping_rate_data][delivery_estimate][maximum][value]', '7');
+
     items.forEach((item, i) => {
       const name = item.name + (item.size ? ` — Taille ${item.size}` : '');
       params.append(`line_items[${i}][price_data][currency]`, 'eur');
