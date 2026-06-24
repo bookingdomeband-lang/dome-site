@@ -1143,11 +1143,11 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
 
         const hasColors = p.colors && p.colors.length > 0;
         const colorList = hasColors ? p.colors : [{ name_fr: '_' }];
+        const sizeList = p.has_sizes ? sizes : ['—'];
 
-        for (const colorObj of colorList) {
+        colorList.forEach((colorObj, ci) => {
           const colorKey = colorObj.name_fr;
-          const colorLabel = hasColors ? ` <span style="color:var(--accent-dark);font-size:0.75rem">(${colorKey})</span>` : '';
-          const sizeList = p.has_sizes ? sizes : ['—'];
+          const isFirst = ci === 0;
 
           const inputs = sizeList.map(size => {
             const qty = productStock[size]?.[colorKey] ?? 0;
@@ -1160,16 +1160,37 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
             </div>`;
           }).join('');
 
-          html += `<tr>
-            <td><strong>${p.name_fr}</strong>${colorLabel}<br><span style="font-size:0.7rem;color:var(--text-dim)">${p.type_fr}</span></td>
-            <td><div style="display:flex;gap:8px;align-items:flex-end;">${inputs}</div></td>
-            <td><button class="btn btn-secondary btn-sm"
-              data-pid="${p.id}"
-              data-sizes="${sizeList.join(',')}"
-              data-color="${colorKey}"
-              onclick="saveProductStock(this)">Sauver</button></td>
+          // Product name cell: only on first color row, spans all colors
+          const nameCell = isFirst
+            ? `<td rowspan="${colorList.length}" style="vertical-align:top;padding-top:0.85rem;">
+                <strong>${p.name_fr}</strong><br>
+                <span style="font-size:0.7rem;color:var(--text-dim)">${p.type_fr}</span>
+               </td>`
+            : '';
+
+          // Color label for multi-color products
+          const colorLabel = hasColors
+            ? `<span style="font-size:0.65rem;letter-spacing:0.15em;color:var(--accent-dark);display:block;margin-bottom:6px;">${colorKey}</span>`
+            : '';
+
+          // Top border only on first row; inner rows get subtle separator
+          const rowStyle = !isFirst ? 'border-top:1px dashed var(--border);' : '';
+
+          html += `<tr style="${rowStyle}">
+            ${nameCell}
+            <td>
+              ${colorLabel}
+              <div style="display:flex;gap:8px;align-items:flex-end;">${inputs}</div>
+            </td>
+            <td style="vertical-align:bottom;">
+              <button class="btn btn-secondary btn-sm"
+                data-pid="${p.id}"
+                data-sizes="${sizeList.join(',')}"
+                data-color="${colorKey}"
+                onclick="saveProductStock(this)">Sauver</button>
+            </td>
           </tr>`;
-        }
+        });
       }
 
       html += '</tbody></table>';
