@@ -23,7 +23,10 @@ export async function onRequestGet(context) {
   }
 
   const data = await response.json();
-  const content = JSON.parse(atob(data.content.replace(/\n/g, '')));
+  const binary = atob(data.content.replace(/\n/g, ''));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  const content = JSON.parse(new TextDecoder('utf-8').decode(bytes));
 
   return new Response(JSON.stringify({ content, sha: data.sha }), {
     headers: { 'Content-Type': 'application/json' }
