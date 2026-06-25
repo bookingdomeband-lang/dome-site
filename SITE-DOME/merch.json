@@ -23,14 +23,17 @@
   },
   {
     "id": "tshirt-tour",
-    "name_fr": "DOME — Tour 2025",
-    "name_en": "DOME — Tour 2025",
+    "name_fr": "DOME — Rorschach",
+    "name_en": "DOME — Rorschach",
     "type_fr": "T-shirt",
     "type_en": "T-shirt",
-    "price": 25,
-    "image": null,
+    "price": 20,
+    "image": "merch/rorshart.png",
     "has_sizes": true,
-    "colors": []
+    "colors": [],
+    "photo_zoom": 1.15,
+    "photo_x": 63,
+    "photo_y": 45
   },
   {
     "id": "hoodie-zip",
