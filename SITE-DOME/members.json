@@ -39,7 +39,12 @@
     "role_fr": "Basse",
     "role_en": "Bass",
     "i18n_key": "role_bass",
-    "photo": null
+    "photo": "membres/sebastien.jpg",
+    "photo_scale": "1.6",
+    "photo_origin_x": "15",
+    "photo_origin_y": "8",
+    "bg_position_x": "40",
+    "bg_position_y": "72"
   },
   {
     "id": "khaled",
