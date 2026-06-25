@@ -1625,8 +1625,13 @@
           }).join('')}
         </div>` : '';
 
+      const zoom = p.photo_zoom || 1;
+      const px = p.photo_x !== undefined ? p.photo_x : 50;
+      const py = p.photo_y !== undefined ? p.photo_y : 50;
+      const imgStyle = `object-fit:cover; transform:scale(${zoom}); transform-origin:${px}% ${py}%;`;
+
       const img = defaultImage
-        ? `<img src="${defaultImage}" alt="${name}" class="merch-img" id="img-${p.id}">`
+        ? `<div style="width:100%;aspect-ratio:1;overflow:hidden;"><img src="${defaultImage}" alt="${name}" class="merch-img" id="img-${p.id}" style="${imgStyle}"></div>`
         : `<div class="merch-img-placeholder"><svg width="80" height="80" viewBox="0 0 80 80" fill="none"><path d="M10 20 L25 10 L40 18 L55 10 L70 20 L60 28 L60 70 L20 70 L20 28 Z" stroke="white" stroke-width="1.5" fill="none"/></svg></div>`;
       return `
         <div class="merch-item" data-product-id="${p.id}">
@@ -1653,7 +1658,10 @@
         const item = btn.closest('.merch-item');
         const pid = item.dataset.productId;
         const imgEl = item.querySelector(`#img-${pid}`);
-        if (imgEl && btn.dataset.image) imgEl.src = btn.dataset.image;
+        if (imgEl && btn.dataset.image) {
+          imgEl.src = btn.dataset.image;
+          // Apply crop for this color if stored (future feature)
+        }
         const addBtn = item.querySelector('.btn-add');
         if (addBtn) {
           addBtn.dataset.color = btn.dataset.colorKey || btn.dataset.color;
