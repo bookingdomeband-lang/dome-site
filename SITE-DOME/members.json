@@ -26,9 +26,12 @@
     "role_fr": "Guitare",
     "role_en": "Guitar",
     "i18n_key": "role_guitar",
-    "photo": "anthony.jpg",
-    "photo_scale": "3.5",
-    "photo_origin_y": "14"
+    "photo": "membres/anthony1.jpg",
+    "photo_scale": "1",
+    "photo_origin_x": "91",
+    "photo_origin_y": "70",
+    "bg_position_x": "33",
+    "bg_position_y": "56"
   },
   {
     "id": "sebastien",
