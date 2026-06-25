@@ -17,8 +17,11 @@
     "role_en": "Guitar",
     "i18n_key": "role_guitar",
     "photo": "maxime.jpg",
-    "photo_scale": "4",
-    "photo_origin_y": "22"
+    "photo_scale": "2.5",
+    "photo_origin_x": "41",
+    "photo_origin_y": "6",
+    "bg_position_x": "51",
+    "bg_position_y": "77"
   },
   {
     "id": "anthony",
