@@ -37,14 +37,17 @@
   },
   {
     "id": "hoodie-zip",
-    "name_fr": "DOME — Logo Zip",
-    "name_en": "DOME — Logo Zip",
-    "type_fr": "Hoodie",
-    "type_en": "Hoodie",
-    "price": 45,
-    "image": null,
+    "name_fr": "DOME — Fleur",
+    "name_en": "DOME — Flower",
+    "type_fr": "T-shirt",
+    "type_en": "T-shirt",
+    "price": 20,
+    "image": "merch/fleur.png",
     "has_sizes": true,
-    "colors": []
+    "colors": [],
+    "photo_zoom": 1.1,
+    "photo_x": 50,
+    "photo_y": 50
   },
   {
     "id": "hoodie-oversize",
