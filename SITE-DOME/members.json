@@ -27,9 +27,9 @@
     "role_en": "Guitar",
     "i18n_key": "role_guitar",
     "photo": "membres/anthony1.jpg",
-    "photo_scale": "1",
-    "photo_origin_x": "91",
-    "photo_origin_y": "70",
+    "photo_scale": "2",
+    "photo_origin_x": "23",
+    "photo_origin_y": "7",
     "bg_position_x": "33",
     "bg_position_y": "56"
   },
