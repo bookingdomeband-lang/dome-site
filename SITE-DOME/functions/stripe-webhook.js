@@ -25,21 +25,18 @@ export async function onRequestPost(context) {
 
   const session = event.data.object;
 
-  // Fetch line items with product metadata
-  const res = await fetch(`https://api.stripe.com/v1/checkout/sessions/${session.id}/line_items?limit=100&expand[]=data.price.product`, {
-    headers: { 'Authorization': `Bearer ${context.env.STRIPE_SECRET_KEY}` }
-  });
-  const { data: lineItems } = await res.json();
+  // Lire le panier depuis les métadonnées de session
+  let cart = [];
+  try {
+    cart = JSON.parse(session.metadata?.cart || '[]');
+  } catch(e) {
+    return new Response('Métadonnées invalides', { status: 400 });
+  }
 
-  for (const item of lineItems) {
-    const meta = item.price?.product?.metadata || {};
-    const productId = meta.product_id;
-    const size = meta.size || '—';
-    if (!productId) continue;
-
-    const key = `stock:${productId}:${size}`;
+  for (const item of cart) {
+    const key = `stock:${item.id}:${item.size}:${item.color}`;
     const current = parseInt(await kv.get(key) || '0');
-    const newQty = Math.max(0, current - (item.quantity || 1));
+    const newQty = Math.max(0, current - (item.qty || 1));
     await kv.put(key, String(newQty));
   }
 

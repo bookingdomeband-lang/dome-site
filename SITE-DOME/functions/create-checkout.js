@@ -32,12 +32,18 @@ export async function onRequestPost(context) {
       const name = item.name + (item.size ? ` — Taille ${item.size}` : '');
       params.append(`line_items[${i}][price_data][currency]`, 'eur');
       params.append(`line_items[${i}][price_data][product_data][name]`, name);
-      params.append(`line_items[${i}][price_data][product_data][metadata][product_id]`, item.id || '');
-      params.append(`line_items[${i}][price_data][product_data][metadata][size]`, item.size || '—');
-      params.append(`line_items[${i}][price_data][product_data][metadata][color]`, item.color || '_');
       params.append(`line_items[${i}][price_data][unit_amount]`, String(item.price * 100));
       params.append(`line_items[${i}][quantity]`, String(item.qty));
     });
+
+    // Stocker le panier dans les métadonnées de session — plus fiable pour le webhook
+    const cartMeta = items.map(i => ({
+      id: i.id,
+      size: i.size || '—',
+      color: i.color || '_',
+      qty: i.qty
+    }));
+    params.append('metadata[cart]', JSON.stringify(cartMeta));
 
     const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
