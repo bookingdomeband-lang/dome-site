@@ -1059,7 +1059,6 @@
     background: var(--dark);
     overflow: hidden;
     width: 100%;
-    padding-top: 1.85rem; /* align with À propos title, not the label above */
   }
 
   .carousel-track {
@@ -1110,6 +1109,18 @@
 
   .carousel-slide.has-photo .carousel-overlay {
     display: none;
+  }
+
+  /* Meilleure lisibilité du texte sur photo */
+  .carousel-slide.has-photo .carousel-name {
+    color: #ffffff;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+  }
+
+  .carousel-slide.has-photo .carousel-role {
+    color: var(--accent);
+    text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+    letter-spacing: 0.3em;
   }
 
   .carousel-avatar {
