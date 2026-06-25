@@ -1019,11 +1019,6 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     document.getElementById('merch-type-en').value = product?.type_en || '';
     document.getElementById('merch-price').value = product?.price || '';
     document.getElementById('merch-image').value = product?.image || '';
-    // Show current image preview if editing
-    if (product?.image) {
-      document.getElementById('merch-preview-img').src = product.image;
-      document.getElementById('merch-image-preview').style.display = 'block';
-    }
     document.getElementById('merch-has-sizes').checked = product ? product.has_sizes : true;
     pendingImageFile = null;
     pendingColorFiles = {};
