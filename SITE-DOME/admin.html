@@ -575,7 +575,8 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
           </div>
           <!-- Aperçu slide complet -->
           <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-            <div id="slide-preview" style="width:100px;height:140px;position:relative;overflow:hidden;border:1px solid var(--border);background:var(--mid);flex-shrink:0;">
+            <div id="slide-preview" style="width:100px;height:140px;position:relative;overflow:hidden;border:1px solid var(--border);background:var(--mid);flex-shrink:0;cursor:grab;"
+              onmousedown="startBgDrag(event)" ontouchstart="startBgDrag(event)">
               <img id="slide-bg-img" src="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;">
               <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%);"></div>
               <div id="slide-avatar-wrap" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
@@ -714,8 +715,56 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   }
 
   // AVATAR CROPPER
-  let avatarDragging = false;
-  let avatarDragStart = { x: 0, y: 0 };
+  function makeDragHandler(onMove) {
+    return function(e) {
+      e.preventDefault();
+      let last = e.touches ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
+                           : { x: e.clientX, y: e.clientY };
+      const el = e.currentTarget;
+      el.style.cursor = 'grabbing';
+
+      const move = (ev) => {
+        const cur = ev.touches ? { x: ev.touches[0].clientX, y: ev.touches[0].clientY }
+                               : { x: ev.clientX, y: ev.clientY };
+        onMove(cur.x - last.x, cur.y - last.y);
+        last = cur;
+      };
+      const up = () => {
+        el.style.cursor = 'grab';
+        document.removeEventListener('mousemove', move);
+        document.removeEventListener('mouseup', up);
+        document.removeEventListener('touchmove', move);
+        document.removeEventListener('touchend', up);
+      };
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', up);
+      document.addEventListener('touchmove', move, { passive: false });
+      document.addEventListener('touchend', up);
+    };
+  }
+
+  function startAvatarDrag(e) {
+    const scale = parseFloat(document.getElementById('membre-scale').value) || 1;
+    // Sensitivity: higher scale = more movement per pixel
+    const sens = (scale / 80) * 100;
+    makeDragHandler((dx, dy) => {
+      const xSlider = document.getElementById('membre-origin-x');
+      const ySlider = document.getElementById('membre-origin-y');
+      xSlider.value = Math.max(0, Math.min(100, parseFloat(xSlider.value) + dx * sens / scale));
+      ySlider.value = Math.max(0, Math.min(100, parseFloat(ySlider.value) + dy * sens / scale));
+      updateAvatarPreview();
+    })(e);
+  }
+
+  function startBgDrag(e) {
+    makeDragHandler((dx, dy) => {
+      const xSlider = document.getElementById('membre-bg-x');
+      const ySlider = document.getElementById('membre-bg-y');
+      xSlider.value = Math.max(0, Math.min(100, parseFloat(xSlider.value) - dx * 1.2));
+      ySlider.value = Math.max(0, Math.min(100, parseFloat(ySlider.value) - dy * 1.2));
+      updateSlidePreview();
+    })(e);
+  }
 
   function updateAvatarPreview() {
     const scale = parseFloat(document.getElementById('membre-scale').value) || 1;
@@ -742,41 +791,6 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     if (nameInput) document.getElementById('slide-name').textContent = nameInput.value || '—';
   }
 
-  function startAvatarDrag(e) {
-    const img = document.getElementById('avatar-preview-img');
-    if (!img.src || img.style.display === 'none') return;
-    e.preventDefault();
-    avatarDragging = true;
-    const touch = e.touches ? e.touches[0] : e;
-    avatarDragStart = { x: touch.clientX, y: touch.clientY };
-
-    const onMove = (ev) => {
-      if (!avatarDragging) return;
-      const t = ev.touches ? ev.touches[0] : ev;
-      const dx = (t.clientX - avatarDragStart.x) * 0.5;
-      const dy = (t.clientY - avatarDragStart.y) * 0.5;
-      avatarDragStart = { x: t.clientX, y: t.clientY };
-
-      const xSlider = document.getElementById('membre-origin-x');
-      const ySlider = document.getElementById('membre-origin-y');
-      xSlider.value = Math.max(0, Math.min(100, parseInt(xSlider.value) - dx));
-      ySlider.value = Math.max(0, Math.min(100, parseInt(ySlider.value) - dy));
-      updateAvatarPreview();
-    };
-    const onUp = () => {
-      avatarDragging = false;
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
-      document.removeEventListener('touchmove', onMove);
-      document.removeEventListener('touchend', onUp);
-      document.getElementById('avatar-preview-wrap').style.cursor = 'grab';
-    };
-    document.getElementById('avatar-preview-wrap').style.cursor = 'grabbing';
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
-    document.addEventListener('touchmove', onMove, { passive: false });
-    document.addEventListener('touchend', onUp);
-  }
 
   function updateSlidePreview() {
     const bgX = parseInt(document.getElementById('membre-bg-x').value) || 50;
