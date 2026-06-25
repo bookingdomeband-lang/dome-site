@@ -5,7 +5,10 @@
     "role_fr": "Chant",
     "role_en": "Vocals",
     "i18n_key": "role_vocals",
-    "photo": null
+    "photo": "membres/franck.jpg",
+    "photo_scale": "1.4",
+    "photo_origin_x": "77",
+    "photo_origin_y": "65"
   },
   {
     "id": "maxime",
