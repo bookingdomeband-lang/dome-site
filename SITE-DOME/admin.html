@@ -1400,7 +1400,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
         return;
       }
 
-      const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+      const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
       let html = `<table class="data-table"><thead><tr><th>Produit</th><th>Stock</th><th>Actions</th></tr></thead><tbody>`;
 
       for (const p of products) {
@@ -1490,7 +1490,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       const [merchRes, stockRes] = await Promise.all([fetch('/merch.json'), fetch('/get-stock')]);
       const products = await merchRes.json();
       const currentStock = await stockRes.json();
-      const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+      const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
       let rows = '';
 
       for (const p of products) {
