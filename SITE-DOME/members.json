@@ -48,5 +48,18 @@
     "photo_origin_y": "46",
     "bg_position_x": "59",
     "bg_position_y": "84"
+  },
+  {
+    "id": "maxime",
+    "name": "Maxime",
+    "role_fr": "Guitare",
+    "role_en": "Guitar",
+    "i18n_key": "role_guitar",
+    "photo": "membres/maxime2.jpg",
+    "photo_scale": "2",
+    "photo_origin_x": "37",
+    "photo_origin_y": "33",
+    "bg_position_x": "62",
+    "bg_position_y": "95"
   }
 ]
