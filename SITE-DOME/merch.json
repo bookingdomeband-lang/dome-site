@@ -50,17 +50,6 @@
     "photo_y": 50
   },
   {
-    "id": "hoodie-oversize",
-    "name_fr": "DOME — Oversize Noir",
-    "name_en": "DOME — Oversize Black",
-    "type_fr": "Hoodie",
-    "type_en": "Hoodie",
-    "price": 45,
-    "image": null,
-    "has_sizes": true,
-    "colors": []
-  },
-  {
     "id": "gobelet",
     "name_fr": "DOME — Gobelet Réutilisable",
     "name_en": "DOME — Reusable Cup",
