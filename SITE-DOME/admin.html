@@ -363,7 +363,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       <button class="btn btn-primary" onclick="saveTexts()">Enregistrer</button>
     </div>
     <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:2rem;line-height:1.7;">
-      Rédigez uniquement en français. La traduction anglaise est générée automatiquement. Séparez les paragraphes par une ligne vide.
+      Modifiez les textes ci-dessous et cliquez Enregistrer pour les publier sur le site.
     </p>
 
     <!-- Biographie -->
@@ -1904,39 +1904,43 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
 
   async function saveTexts() {
     const status = document.getElementById('texts-status');
-    const btns = document.querySelectorAll('#tab-textes .btn-primary, #tab-textes .btn-secondary');
+    const btn = document.querySelector('#tab-textes .btn-primary');
 
     const bioRaw = document.getElementById('text-bio-fr').value;
     const bioParagraphs = bioRaw.split(/\n\n+/).map(p => p.trim()).filter(p => p);
+    const music = document.getElementById('text-music-fr').value.trim();
+    const news = document.getElementById('text-news-fr').value.trim();
 
-    const frTexts = {
+    // Sauvegarde le même texte en FR et EN
+    const data = {
       about_p1_fr: bioParagraphs[0] || '',
+      about_p1_en: bioParagraphs[0] || '',
       about_p2_fr: bioParagraphs[1] || '',
+      about_p2_en: bioParagraphs[1] || '',
       about_p3_fr: bioParagraphs[2] || '',
-      about_p1_en: '', about_p2_en: '', about_p3_en: '',
-      music_fr: document.getElementById('text-music-fr').value.trim(),
-      music_en: '',
-      news_fr: document.getElementById('text-news-fr').value.trim(),
-      news_en: '',
+      about_p3_en: bioParagraphs[2] || '',
+      music_fr: music,
+      music_en: music,
+      news_fr: news,
+      news_en: news,
     };
 
-    btns.forEach(b => b.disabled = true);
+    btn.disabled = true;
     status.style.display = 'block';
     status.style.color = 'var(--text-muted)';
-    status.textContent = '⏳ Sauvegarde et traduction en cours...';
+    status.textContent = '⏳ Sauvegarde...';
 
     try {
       const { sha } = await loadFile('texts.json');
-      await saveFile('texts.json', frTexts, sha);
-
+      await saveFile('texts.json', data, sha);
       status.style.color = '#4caf6e';
-      status.textContent = '✓ Textes sauvegardés et traduits !';
+      status.textContent = '✓ Textes sauvegardés !';
       setTimeout(() => { status.style.display = 'none'; }, 3000);
     } catch(e) {
       status.style.color = 'var(--red)';
       status.textContent = 'Erreur : ' + e.message;
     } finally {
-      btns.forEach(b => b.disabled = false);
+      btn.disabled = false;
     }
   }
 
