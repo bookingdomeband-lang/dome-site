@@ -360,7 +360,10 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   <div class="tab-content" id="tab-textes">
     <div class="section-header">
       <h2>Textes du site</h2>
-      <button class="btn btn-primary" onclick="saveTexts()">Traduire & Enregistrer</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="saveTexts(false)">Enregistrer</button>
+        <button class="btn btn-primary" onclick="saveTexts(true)">Traduire & Enregistrer</button>
+      </div>
     </div>
     <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:2rem;line-height:1.7;">
       Rédigez uniquement en français. La traduction anglaise est générée automatiquement. Séparez les paragraphes par une ligne vide.
@@ -386,8 +389,9 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       <textarea id="text-news-fr" rows="6" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;line-height:1.6;" placeholder="Ex : DOME sera en concert le 5 décembre 2026 au Festival Metal en Seille à Nomeny !"></textarea>
     </div>
     <div id="texts-status" style="margin-top:1rem;font-size:0.8rem;display:none;padding:10px;text-align:center;"></div>
-    <div style="display:flex;justify-content:flex-end;margin-top:1rem;">
-      <button class="btn btn-primary" onclick="saveTexts()">Traduire & Enregistrer</button>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:1rem;">
+      <button class="btn btn-secondary" onclick="saveTexts(false)">Enregistrer</button>
+      <button class="btn btn-primary" onclick="saveTexts(true)">Traduire & Enregistrer</button>
     </div>
   </div>
 
@@ -1903,32 +1907,25 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   }
 
   async function translateTexts(texts) {
-    const prompt = `Traduis ces textes du français vers l'anglais pour le site d'un groupe de metal. 
-Conserve le ton, le style et les noms propres (DOME, Beyond The Scars, FH Studio, Haunting The Chapel, etc.).
-Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour.
-
-Textes à traduire :
-${JSON.stringify(texts, null, 2)}`;
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const data = await res.json();
-    const text = data.content[0].text.trim();
-    return JSON.parse(text.replace(/```json|```/g, '').trim());
+    const translated = {};
+    for (const [key, value] of Object.entries(texts)) {
+      if (!value || !value.trim()) { translated[key] = ''; continue; }
+      try {
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(value)}&langpair=fr|en`;
+        const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+        const data = await res.json();
+        translated[key] = data.responseData?.translatedText || value;
+      } catch(e) {
+        translated[key] = value; // Fallback : texte français utilisé
+      }
+    }
+    return translated;
   }
 
-  async function saveTexts() {
+  async function saveTexts(withTranslation = true) {
     const status = document.getElementById('texts-status');
-    const btn = document.querySelector('#tab-textes .btn-primary');
+    const btns = document.querySelectorAll('#tab-textes .btn-primary');
 
-    // Découper la bio en paragraphes (séparés par ligne vide)
     const bioRaw = document.getElementById('text-bio-fr').value;
     const bioParagraphs = bioRaw.split(/\n\n+/).map(p => p.trim()).filter(p => p);
 
@@ -1940,43 +1937,47 @@ ${JSON.stringify(texts, null, 2)}`;
       news: document.getElementById('text-news-fr').value.trim(),
     };
 
-    btn.disabled = true;
-    btn.textContent = 'Traduction en cours...';
+    btns.forEach(b => b.disabled = true);
     status.style.display = 'block';
     status.style.color = 'var(--text-muted)';
     status.style.background = 'var(--black)';
-    status.textContent = '⏳ Traduction automatique en anglais...';
+
+    let enTexts = { ...frTexts };
+
+    if (withTranslation) {
+      status.textContent = '⏳ Traduction en cours...';
+      enTexts = await translateTexts(frTexts);
+    }
+
+    status.textContent = '⏳ Sauvegarde...';
 
     try {
-      const enTexts = await translateTexts(frTexts);
-
       const data = {
         about_p1_fr: frTexts.about_p1,
-        about_p1_en: enTexts.about_p1 || '',
+        about_p1_en: enTexts.about_p1 || frTexts.about_p1,
         about_p2_fr: frTexts.about_p2,
-        about_p2_en: enTexts.about_p2 || '',
+        about_p2_en: enTexts.about_p2 || frTexts.about_p2,
         about_p3_fr: frTexts.about_p3,
-        about_p3_en: enTexts.about_p3 || '',
+        about_p3_en: enTexts.about_p3 || frTexts.about_p3,
         music_fr: frTexts.music,
-        music_en: enTexts.music || '',
+        music_en: enTexts.music || frTexts.music,
         news_fr: frTexts.news,
-        news_en: enTexts.news || '',
+        news_en: enTexts.news || frTexts.news,
       };
 
-      status.textContent = '⏳ Sauvegarde...';
       const { sha } = await loadFile('texts.json');
       await saveFile('texts.json', data, sha);
 
       status.style.color = '#4caf6e';
-      status.textContent = '✓ Textes traduits et sauvegardés !';
-      btn.textContent = 'Traduire & Enregistrer';
-      btn.disabled = false;
+      status.textContent = withTranslation
+        ? '✓ Textes traduits et sauvegardés !'
+        : '✓ Textes sauvegardés !';
       setTimeout(() => { status.style.display = 'none'; }, 3000);
     } catch(e) {
       status.style.color = 'var(--red)';
-      status.textContent = 'Erreur : ' + e.message;
-      btn.textContent = 'Traduire & Enregistrer';
-      btn.disabled = false;
+      status.textContent = 'Erreur sauvegarde : ' + e.message;
+    } finally {
+      btns.forEach(b => b.disabled = false);
     }
   }
 
