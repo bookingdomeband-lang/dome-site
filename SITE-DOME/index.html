@@ -297,8 +297,8 @@
   }
 
   .merch-grid {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
     gap: 1px;
     background: var(--border);
     border: 1px solid var(--border);
@@ -309,9 +309,6 @@
     background: var(--near-black);
     cursor: pointer;
     position: relative;
-    width: calc(33.333% - 1px);
-    min-width: 260px;
-    flex: 0 1 calc(33.333% - 1px);
     overflow: hidden;
   }
 
@@ -919,7 +916,7 @@
     .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 
     /* MERCH — 2 colonnes sur tablette */
-    .merch-item { width: calc(50% - 1px); flex: 0 1 calc(50% - 1px); min-width: unset; }
+    .merch-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 320px)); }
 
     /* MUSIQUE — empile les colonnes */
     #musique > div[style*="grid-template-columns"] {
@@ -959,7 +956,7 @@
 
   /* Très petits écrans */
   @media (max-width: 380px) {
-    .merch-item { width: 100%; flex: 0 1 100%; }
+    .merch-grid { grid-template-columns: 1fr; }
     .hero-title { font-size: 4rem; }
     .gallery-grid { grid-template-columns: 1fr; }
   }
