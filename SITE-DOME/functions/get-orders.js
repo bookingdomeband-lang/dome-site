@@ -21,9 +21,14 @@ export async function onRequestGet(context) {
         currency: s.currency,
         customer: s.customer_details?.name || s.customer_details?.email || '—',
         email: s.customer_details?.email || '—',
-        shipping: s.shipping_details?.address
-          ? `${s.shipping_details.address.line1}, ${s.shipping_details.address.postal_code} ${s.shipping_details.address.city}`
-          : '—',
+        shipping: s.shipping_details?.address ? {
+          name: s.shipping_details.name || '',
+          line1: s.shipping_details.address.line1 || '',
+          line2: s.shipping_details.address.line2 || '',
+          postal_code: s.shipping_details.address.postal_code || '',
+          city: s.shipping_details.address.city || '',
+          country: s.shipping_details.address.country || '',
+        } : null,
         items: (s.line_items?.data || []).map(i => ({
           name: i.description,
           qty: i.quantity,

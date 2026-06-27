@@ -13,6 +13,11 @@ export async function onRequestPost(context) {
     params.append('success_url', `${origin}/success.html`);
     params.append('cancel_url', `${origin}/#merch`);
 
+    // Collecte email pour l'envoi automatique du reçu Stripe
+    params.append('customer_creation', 'always');
+    params.append('payment_intent_data[setup_future_usage]', 'off_session');
+    params.append('billing_address_collection', 'auto');
+
     const countries = ['FR', 'BE', 'CH', 'LU', 'DE', 'ES', 'IT', 'NL'];
     countries.forEach((c, i) => {
       params.append(`shipping_address_collection[allowed_countries][${i}]`, c);
