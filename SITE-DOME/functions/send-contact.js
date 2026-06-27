@@ -2,9 +2,12 @@ export async function onRequestPost(context) {
   const env = context.env;
 
   try {
-    const { name, subject, message, turnstileToken } = await context.request.json();
+    const { name, email, phone, subject, message, turnstileToken } = await context.request.json();
 
     // Validation basique
+    if (!email || !email.includes('@')) {
+      return json({ error: 'Email invalide.' }, 400);
+    }
     if (!message || message.trim().length < 5) {
       return json({ error: 'Message trop court.' }, 400);
     }
@@ -33,10 +36,16 @@ export async function onRequestPost(context) {
       body: JSON.stringify({
         from: 'Contact DOME <contact@dome-official.com>',
         to: ['booking.domeband@gmail.com'],
-        reply_to: name ? `${name} <booking.domeband@gmail.com>` : undefined,
+        reply_to: email,
         subject: subject?.trim() || 'Message depuis dome-official.com',
-        text: `Nom : ${name || 'Non renseigné'}\n\n${message}`,
-        html: `<p><strong>Nom :</strong> ${name || 'Non renseigné'}</p><br><p>${message.replace(/\n/g, '<br>')}</p>`,
+        text: `Nom : ${name || 'Non renseigné'}\nEmail : ${email}\nTéléphone : ${phone || 'Non renseigné'}\n\n${message}`,
+        html: `
+          <p><strong>Nom :</strong> ${name || 'Non renseigné'}</p>
+          <p><strong>Email :</strong> <a href="mailto:${email}">${email}</a></p>
+          <p><strong>Téléphone :</strong> ${phone || 'Non renseigné'}</p>
+          <br>
+          <p>${message.replace(/\n/g, '<br>')}</p>
+        `,
       }),
     });
 
