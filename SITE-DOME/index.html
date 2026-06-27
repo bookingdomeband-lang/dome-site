@@ -423,22 +423,28 @@
   }
 
   .merch-gallery-nav {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    right: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 6px 0 2px;
+    z-index: 2;
+    pointer-events: none;
   }
 
   .merch-gallery-dot {
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: var(--border-light);
+    background: rgba(255,255,255,0.4);
     cursor: pointer;
     transition: background 0.2s;
     border: none;
     padding: 0;
+    pointer-events: all;
   }
 
   .merch-gallery-dot.active { background: var(--accent); }
@@ -1690,10 +1696,12 @@
         <div class="color-selector" data-id="${p.id}">
           ${p.colors.map((c, i) => {
             const cname = currentLang === 'en' ? (c.name_en || c.name_fr) : c.name_fr;
+            const colorImagesJson = JSON.stringify(c.images || []).replace(/"/g, '&quot;');
             return `<button class="color-btn${i === 0 ? ' active' : ''}"
               data-color="${cname}"
               data-color-key="${c.name_fr}"
               data-image="${c.image || ''}"
+              data-images="${colorImagesJson}"
               >${cname}</button>`;
           }).join('')}
         </div>` : '';
@@ -1721,10 +1729,10 @@
         imgHtml = `
           <div class="merch-gallery-wrap" id="gallery-${p.id}">
             ${imgs}
+            <div class="merch-gallery-nav">${dots}</div>
             <button class="merch-gallery-btn" style="position:absolute;left:6px;top:50%;transform:translateY(-50%);" onclick="stepMerchImg('${p.id}',-1,${allImages.length})">&#8592;</button>
             <button class="merch-gallery-btn" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);" onclick="stepMerchImg('${p.id}',1,${allImages.length})">&#8594;</button>
-          </div>
-          <div class="merch-gallery-nav">${dots}</div>`;
+          </div>`;
       } else {
         imgHtml = defaultImage
           ? `<div class="merch-gallery-wrap"><img src="${defaultImage}" alt="${name}" class="merch-img active" id="img-${p.id}-0" style="${imgStyle}"></div>`
@@ -1754,22 +1762,21 @@
         btn.classList.add('active');
         const item = btn.closest('.merch-item');
         const pid = item.dataset.productId;
-        const imgEl = item.querySelector(`#img-${pid}`);
-        if (imgEl && btn.dataset.image) {
-          imgEl.src = btn.dataset.image;
-          // Apply crop for this color if stored (future feature)
-        }
+
+        // Build image list for this color
+        const colorImages = [];
+        if (btn.dataset.image) colorImages.push(btn.dataset.image);
+        const extraImages = btn.dataset.images ? JSON.parse(btn.dataset.images) : [];
+        extraImages.forEach(img => { if (img && !colorImages.includes(img)) colorImages.push(img); });
+        updateMerchGallery(item, pid, colorImages);
+
         const addBtn = item.querySelector('.btn-add');
-        if (addBtn) {
-          addBtn.dataset.color = btn.dataset.colorKey || btn.dataset.color;
-        }
-        // Re-apply stock for new color
+        if (addBtn) addBtn.dataset.color = btn.dataset.colorKey || btn.dataset.color;
         if (Object.keys(stockData).length) applyStockToMerch();
       });
-      // Set initial color on first button
       if (btn.classList.contains('active')) {
         const addBtn = btn.closest('.merch-item')?.querySelector('.btn-add');
-        if (addBtn) addBtn.dataset.color = btn.dataset.color;
+        if (addBtn) addBtn.dataset.color = btn.dataset.colorKey || btn.dataset.color;
       }
     });
 
@@ -2160,6 +2167,39 @@
       btn.textContent = currentLang === 'fr' ? 'Erreur — réessayez' : 'Error — try again';
       btn.disabled = false;
       console.error(err);
+    }
+  }
+
+  function updateMerchGallery(item, pid, images) {
+    const wrap = item.querySelector('.merch-gallery-wrap');
+    if (!wrap) return;
+
+    if (images.length === 0) return;
+
+    // Remove old nav
+    let nav = item.querySelector('.merch-gallery-nav');
+    if (nav) nav.remove();
+
+    // Reset gallery state
+    merchGalleryState[pid] = 0;
+
+    if (images.length === 1) {
+      wrap.innerHTML = `<img src="${images[0]}" class="merch-img active" id="img-${pid}-0">`;
+    } else {
+      const imgs = images.map((src, i) =>
+        `<img src="${src}" class="merch-img${i === 0 ? ' active' : ''}" id="img-${pid}-${i}">`
+      ).join('');
+      const dots = images.map((_, i) =>
+        `<button class="merch-gallery-dot${i === 0 ? ' active' : ''}" data-idx="${i}" data-pid="${pid}" onclick="setMerchImg('${pid}',${i},${images.length})"></button>`
+      ).join('');
+      wrap.innerHTML = imgs +
+        `<div class="merch-gallery-nav">${dots}</div>` +
+        `<button class="merch-gallery-btn" style="position:absolute;left:6px;top:50%;transform:translateY(-50%);" onclick="stepMerchImg('${pid}',-1,${images.length})">&#8592;</button>` +
+        `<button class="merch-gallery-btn" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);" onclick="stepMerchImg('${pid}',1,${images.length})">&#8594;</button>`;
+
+      // Remove any old external nav
+      const oldNav = wrap.nextElementSibling;
+      if (oldNav && oldNav.classList.contains('merch-gallery-nav')) oldNav.remove();
     }
   }
 

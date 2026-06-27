@@ -778,6 +778,10 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     const div = document.createElement('div');
     div.id = `color-row-${idx}`;
     div.style.cssText = 'background:var(--black);border:1px solid var(--border);padding:0.75rem;display:flex;flex-direction:column;gap:8px;';
+
+    // Existing extra images for this color
+    const existingColorImages = color?.images ? [...color.images] : [];
+
     div.innerHTML = `
       <div style="display:flex;gap:8px;align-items:flex-start;">
         <div style="flex:1;">
@@ -795,14 +799,35 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
         <button onclick="document.getElementById('color-row-${idx}').remove()"
           style="background:none;border:1px solid var(--red);color:var(--red);cursor:pointer;padding:6px 10px;font-size:0.7rem;align-self:flex-end;">✕</button>
       </div>
+
+      <!-- Photo principale de la couleur -->
       <div style="display:flex;gap:8px;align-items:center;">
         <input type="file" id="color-file-${idx}" accept="image/*" style="display:none;" onchange="previewColorImage(this,${idx})">
+        <label style="font-size:0.55rem;letter-spacing:0.15em;color:var(--text-dim);white-space:nowrap;margin-bottom:0;">Photo principale</label>
         <input type="text" placeholder="photo-noir.jpg" value="${color?.image||''}"
           style="flex:1;background:var(--dark);border:1px solid var(--border);color:var(--text);padding:6px 8px;font-size:0.8rem;"
           id="color-image-${idx}">
         <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('color-file-${idx}').click()">Parcourir</button>
         ${color?.image ? `<img src="${color.image}" id="color-preview-${idx}" style="width:40px;height:30px;object-fit:cover;border:1px solid var(--border);">` : `<div id="color-preview-${idx}"></div>`}
+      </div>
+
+      <!-- Photos supplémentaires de la couleur -->
+      <div>
+        <label style="font-size:0.55rem;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:4px;">Photos supplémentaires (galerie)</label>
+        <input type="file" id="color-extra-files-${idx}" accept="image/*" multiple style="display:none;" onchange="previewColorExtraImages(this,${idx})">
+        <button type="button" class="btn btn-secondary btn-sm" style="width:100%;margin-bottom:6px;" onclick="document.getElementById('color-extra-files-${idx}').click()">+ Ajouter des photos</button>
+        <div id="color-extra-preview-${idx}" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+        <div id="color-existing-images-${idx}" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">
+          ${existingColorImages.map((src, i) => `
+            <div style="position:relative;">
+              <img src="${src}" style="width:50px;height:50px;object-fit:cover;border:1px solid var(--border);display:block;">
+              <button onclick="removeColorExtraImage(${idx},${i})" style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,0.7);border:none;color:white;cursor:pointer;font-size:0.55rem;padding:1px 3px;line-height:1;">✕</button>
+            </div>`).join('')}
+        </div>
       </div>`;
+
+    // Store existing images in dataset for later retrieval
+    div.dataset.existingImages = JSON.stringify(existingColorImages);
     list.appendChild(div);
   }
 
@@ -819,6 +844,36 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     reader.readAsDataURL(file);
   }
 
+  // Extra images per color
+  const pendingColorExtraFiles = {};
+
+  function previewColorExtraImages(input, idx) {
+    const files = Array.from(input.files);
+    if (!pendingColorExtraFiles[idx]) pendingColorExtraFiles[idx] = [];
+    pendingColorExtraFiles[idx].push(...files);
+    const preview = document.getElementById(`color-extra-preview-${idx}`);
+    preview.innerHTML = (pendingColorExtraFiles[idx] || []).map(f => {
+      const url = URL.createObjectURL(f);
+      return `<div><img src="${url}" style="width:50px;height:50px;object-fit:cover;border:1px solid var(--border);display:block;">
+        <p style="font-size:0.45rem;color:var(--text-dim);text-align:center;max-width:50px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</p></div>`;
+    }).join('');
+  }
+
+  function removeColorExtraImage(colorIdx, imgIdx) {
+    const row = document.getElementById(`color-row-${colorIdx}`);
+    if (!row) return;
+    let existing = JSON.parse(row.dataset.existingImages || '[]');
+    existing.splice(imgIdx, 1);
+    row.dataset.existingImages = JSON.stringify(existing);
+    // Re-render existing images
+    const container = document.getElementById(`color-existing-images-${colorIdx}`);
+    container.innerHTML = existing.map((src, i) => `
+      <div style="position:relative;">
+        <img src="${src}" style="width:50px;height:50px;object-fit:cover;border:1px solid var(--border);display:block;">
+        <button onclick="removeColorExtraImage(${colorIdx},${i})" style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,0.7);border:none;color:white;cursor:pointer;font-size:0.55rem;padding:1px 3px;line-height:1;">✕</button>
+      </div>`).join('');
+  }
+
   function getColorsFromForm() {
     const list = document.getElementById('merch-colors-list');
     const colors = [];
@@ -827,7 +882,8 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       const name_fr = document.getElementById(`color-name-fr-${idx}`)?.value.trim();
       const name_en = document.getElementById(`color-name-en-${idx}`)?.value.trim();
       const image = document.getElementById(`color-image-${idx}`)?.value.trim() || null;
-      if (name_fr) colors.push({ name_fr, name_en: name_en || name_fr, image });
+      const existingImages = JSON.parse(row.dataset.existingImages || '[]');
+      if (name_fr) colors.push({ name_fr, name_en: name_en || name_fr, image, images: existingImages });
     }
     return colors;
   }
@@ -1126,6 +1182,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     }
 
     // Upload color photos if any
+    // Upload color main photos + extra images
     for (const [idx, file] of Object.entries(pendingColorFiles)) {
       try {
         showToast(`Upload photo couleur ${parseInt(idx)+1}...`);
@@ -1133,6 +1190,19 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
         const colorIdx = parseInt(idx);
         if (product.colors[colorIdx]) product.colors[colorIdx].image = `merch/${filename}`;
       } catch(e) { showToast('Erreur upload couleur : ' + e.message, 'error'); return; }
+    }
+    // Upload extra images per color
+    for (const [idx, files] of Object.entries(pendingColorExtraFiles)) {
+      const colorIdx = parseInt(idx);
+      if (!product.colors[colorIdx]) continue;
+      if (!product.colors[colorIdx].images) product.colors[colorIdx].images = [];
+      for (const file of files) {
+        try {
+          const filename = await uploadFile(file, 'merch');
+          product.colors[colorIdx].images.push(`merch/${filename}`);
+        } catch(e) { showToast('Erreur upload : ' + e.message, 'error'); return; }
+      }
+      delete pendingColorExtraFiles[idx];
     }
     pendingColorFiles = {};
 
