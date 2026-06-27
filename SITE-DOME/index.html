@@ -298,13 +298,12 @@
 
   .merch-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(220px, 280px));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 1px;
     background: var(--border);
     border: 1px solid var(--border);
-    width: fit-content;
-    max-width: 100%;
     margin: 0 auto;
+    width: 100%;
   }
 
   .merch-placeholder {
@@ -925,8 +924,8 @@
     .concert-date { font-size: 1.6rem; }
     .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 
-    /* MERCH — 2 colonnes sur tablette */
-    .merch-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); width: 100%; }
+    /* MERCH — 3 colonnes sur tablette */
+    .merch-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
     /* MUSIQUE — empile les colonnes */
     #musique > div[style*="grid-template-columns"] {
@@ -966,7 +965,7 @@
 
   /* Très petits écrans */
   @media (max-width: 380px) {
-    .merch-grid { grid-template-columns: 1fr; width: 100%; }
+    .merch-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .hero-title { font-size: 4rem; }
     .gallery-grid { grid-template-columns: 1fr; }
   }
@@ -1764,7 +1763,7 @@
           </div>
         </div>`;
     }).join('') + (() => {
-      const cols = 3;
+      const cols = 6;
       const remainder = products.length % cols;
       if (remainder === 0) return '';
       return Array(cols - remainder).fill('<div class="merch-placeholder"></div>').join('');
