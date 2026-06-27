@@ -1432,6 +1432,12 @@
     <div style="display:flex;flex-direction:column;gap:0.75rem;">
       <input type="text" id="contactName" placeholder="Nom"
         style="background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-size:0.85rem;width:100%;box-sizing:border-box;">
+      <div style="display:flex;gap:8px;">
+        <input type="email" id="contactEmail" placeholder="Email *" required
+          style="background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-size:0.85rem;flex:1;box-sizing:border-box;">
+        <input type="tel" id="contactPhone" placeholder="Téléphone"
+          style="background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-size:0.85rem;flex:1;box-sizing:border-box;">
+      </div>
       <input type="text" id="contactSubject" placeholder="Sujet"
         style="background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-size:0.85rem;width:100%;box-sizing:border-box;">
       <textarea id="contactMessage" placeholder="Message" rows="5"
@@ -2320,6 +2326,8 @@
     document.getElementById('contactModal').classList.remove('open');
     // Reset form
     document.getElementById('contactName').value = '';
+    document.getElementById('contactEmail').value = '';
+    document.getElementById('contactPhone').value = '';
     document.getElementById('contactSubject').value = '';
     document.getElementById('contactMessage').value = '';
     const status = document.getElementById('contactStatus');
@@ -2333,10 +2341,19 @@
 
   async function sendContact() {
     const name = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const phone = document.getElementById('contactPhone').value.trim();
     const subject = document.getElementById('contactSubject').value.trim();
     const message = document.getElementById('contactMessage').value.trim();
     const status = document.getElementById('contactStatus');
     const btn = document.getElementById('contactSendBtn');
+
+    if (!email || !email.includes('@')) {
+      status.style.display = 'block';
+      status.style.color = 'var(--red)';
+      status.textContent = currentLang === 'fr' ? 'Veuillez renseigner un email valide.' : 'Please enter a valid email.';
+      return;
+    }
 
     if (!message) {
       status.style.display = 'block';
@@ -2356,7 +2373,7 @@
       const res = await fetch('/send-contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, subject, message, turnstileToken }),
+        body: JSON.stringify({ name, email, phone, subject, message, turnstileToken }),
       });
       const data = await res.json();
       if (data.success) {
