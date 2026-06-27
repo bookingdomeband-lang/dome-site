@@ -1,23 +1,18 @@
 export async function onRequestPost(context) {
-  const ai = context.env.AI;
-  if (!ai) return json({ error: 'Binding AI non configuré dans Cloudflare Pages' }, 500);
-
   try {
     const { texts } = await context.request.json();
-
-    // Traduire chaque champ individuellement avec le modèle m2m100
     const translated = {};
+
     for (const [key, value] of Object.entries(texts)) {
       if (!value || !value.trim()) {
         translated[key] = '';
         continue;
       }
-      const result = await ai.run('@cf/meta/m2m100-1.2b', {
-        text: value,
-        source_lang: 'fr',
-        target_lang: 'en',
-      });
-      translated[key] = result.translated_text || value;
+      // MyMemory API — gratuit, sans clé, sans compte
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(value)}&langpair=fr|en`;
+      const res = await fetch(url);
+      const data = await res.json();
+      translated[key] = data.responseData?.translatedText || value;
     }
 
     return json(translated);
