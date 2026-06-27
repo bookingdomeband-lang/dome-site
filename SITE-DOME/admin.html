@@ -1750,11 +1750,21 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
           </span>`
         ).join('');
 
-        return `<div style="border:1px solid var(--border);background:var(--near-black);padding:1.25rem;margin-bottom:1px;">
+        const shipped = o.shipped;
+        return `<div style="border:1px solid ${shipped ? '#2d6a3f' : 'var(--border)'};background:${shipped ? 'rgba(45,106,63,0.08)' : 'var(--near-black)'};padding:1.25rem;margin-bottom:1px;transition:all 0.3s;" id="order-${o.id}">
           <div style="display:grid;grid-template-columns:160px 1fr 1fr auto;gap:1rem;align-items:start;">
             <div>
               <p style="font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;">Date</p>
               <p style="font-size:0.85rem;color:var(--text);">${date}</p>
+              <!-- Bouton expédition -->
+              <label style="display:flex;align-items:center;gap:6px;margin-top:10px;cursor:pointer;">
+                <input type="checkbox" ${shipped ? 'checked' : ''}
+                  onchange="toggleShipped('${o.id}', this.checked)"
+                  style="width:14px;height:14px;accent-color:#2d6a3f;cursor:pointer;">
+                <span style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:${shipped ? '#4caf6e' : 'var(--text-dim)'};">
+                  ${shipped ? '✓ Expédié' : 'À expédier'}
+                </span>
+              </label>
             </div>
             <div>
               <p style="font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;">Client</p>
@@ -1784,6 +1794,29 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     } catch(e) {
       el.innerHTML = `<div class="empty-state">Erreur : ${e.message}</div>`;
     }
+  }
+
+  async function toggleShipped(orderId, shipped) {
+    try {
+      const res = await fetch('/mark-shipped', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, shipped }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+      // Update card style in place
+      const card = document.getElementById(`order-${orderId}`);
+      if (card) {
+        card.style.border = `1px solid ${shipped ? '#2d6a3f' : 'var(--border)'}`;
+        card.style.background = shipped ? 'rgba(45,106,63,0.08)' : 'var(--near-black)';
+        const label = card.querySelector('label span');
+        if (label) {
+          label.textContent = shipped ? '✓ Expédié' : 'À expédier';
+          label.style.color = shipped ? '#4caf6e' : 'var(--text-dim)';
+        }
+      }
+    } catch(e) { showToast(e.message, 'error'); }
   }
 
   // =============================================
