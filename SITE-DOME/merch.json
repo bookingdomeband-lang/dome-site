@@ -65,5 +65,22 @@
     "images": [
       "merch/gobelet2.jpg"
     ]
+  },
+  {
+    "id": "dome-eco-cup-flower",
+    "name_fr": "DOME — Eco-Cup - Flower",
+    "name_en": "DOME — Reusable Cup - Flower",
+    "type_fr": "Gobelet",
+    "type_en": "Cup",
+    "price": 3,
+    "image": "merch/20260627_084004.jpg",
+    "has_sizes": true,
+    "colors": [],
+    "photo_zoom": 1,
+    "photo_x": 50,
+    "photo_y": 50,
+    "images": [
+      "merch/20260627_083957.jpg"
+    ]
   }
 ]
