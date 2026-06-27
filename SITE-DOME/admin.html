@@ -360,75 +360,32 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   <div class="tab-content" id="tab-textes">
     <div class="section-header">
       <h2>Textes du site</h2>
-      <button class="btn btn-primary" onclick="saveTexts()">Enregistrer</button>
+      <button class="btn btn-primary" onclick="saveTexts()">Traduire & Enregistrer</button>
     </div>
-    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:2rem;line-height:1.7;">Modifiez les textes ci-dessous. Chaque modification est publiée immédiatement après sauvegarde.</p>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:2rem;line-height:1.7;">
+      Rédigez uniquement en français. La traduction anglaise est générée automatiquement. Séparez les paragraphes par une ligne vide.
+    </p>
 
     <!-- Biographie -->
     <div style="margin-bottom:2rem;border:1px solid var(--border);padding:1.5rem;">
-      <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:1rem;">Biographie — À propos</h3>
-      <div class="form-row-2">
-        <div>
-          <label>Paragraphe 1 — FR</label>
-          <textarea id="text-about-p1-fr" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
-        </div>
-        <div>
-          <label>Paragraphe 1 — EN</label>
-          <textarea id="text-about-p1-en" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
-        </div>
-      </div>
-      <div class="form-row-2">
-        <div>
-          <label>Paragraphe 2 — FR</label>
-          <textarea id="text-about-p2-fr" rows="4" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
-        </div>
-        <div>
-          <label>Paragraphe 2 — EN</label>
-          <textarea id="text-about-p2-en" rows="4" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
-        </div>
-      </div>
-      <div class="form-row-2">
-        <div>
-          <label>Paragraphe 3 — FR</label>
-          <textarea id="text-about-p3-fr" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
-        </div>
-        <div>
-          <label>Paragraphe 3 — EN</label>
-          <textarea id="text-about-p3-en" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
-        </div>
-      </div>
+      <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:0.5rem;">Biographie — À propos</h3>
+      <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:0.75rem;">Chaque paragraphe séparé par une ligne vide sera affiché indépendamment sur le site.</p>
+      <textarea id="text-bio-fr" rows="10" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;line-height:1.6;"></textarea>
     </div>
 
     <!-- Musique -->
     <div style="margin-bottom:2rem;border:1px solid var(--border);padding:1.5rem;">
-      <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:1rem;">Section Musique</h3>
-      <div class="form-row-2">
-        <div>
-          <label>Description — FR</label>
-          <textarea id="text-music-fr" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
-        </div>
-        <div>
-          <label>Description — EN</label>
-          <textarea id="text-music-en" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
-        </div>
-      </div>
+      <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:0.5rem;">Section Musique</h3>
+      <textarea id="text-music-fr" rows="4" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;line-height:1.6;"></textarea>
     </div>
 
     <!-- Actualités -->
     <div style="border:1px solid var(--border);padding:1.5rem;">
       <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:0.5rem;">Actualités</h3>
-      <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;">Laissez vide pour masquer la section. Séparez les paragraphes par une ligne vide.</p>
-      <div class="form-row-2">
-        <div>
-          <label>Actualités — FR</label>
-          <textarea id="text-news-fr" rows="6" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="Ex : DOME sera en concert le 5 décembre 2026 au Festival Metal en Seille à Nomeny !"></textarea>
-        </div>
-        <div>
-          <label>Actualités — EN</label>
-          <textarea id="text-news-en" rows="6" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="Ex: DOME will perform on December 5th 2026 at the Metal en Seille Festival in Nomeny!"></textarea>
-        </div>
-      </div>
+      <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:0.75rem;">Laissez vide pour masquer la section sur le site.</p>
+      <textarea id="text-news-fr" rows="6" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;line-height:1.6;" placeholder="Ex : DOME sera en concert le 5 décembre 2026 au Festival Metal en Seille à Nomeny !"></textarea>
     </div>
+    <div id="texts-status" style="margin-top:1rem;font-size:0.8rem;display:none;padding:10px;text-align:center;"></div>
   </div>
 
 </main>
@@ -1898,42 +1855,101 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   // =============================================
   // TEXTES
   // =============================================
+  function stripHtml(html) {
+    return html.replace(/<[^>]*>/g, '');
+  }
+
   async function loadTextsAdmin() {
     try {
       const { data } = await loadFile('texts.json');
-      const t = data;
-      document.getElementById('text-about-p1-fr').value = t.about_p1_fr || '';
-      document.getElementById('text-about-p1-en').value = t.about_p1_en || '';
-      document.getElementById('text-about-p2-fr').value = t.about_p2_fr || '';
-      document.getElementById('text-about-p2-en').value = t.about_p2_en || '';
-      document.getElementById('text-about-p3-fr').value = t.about_p3_fr || '';
-      document.getElementById('text-about-p3-en').value = t.about_p3_en || '';
-      document.getElementById('text-music-fr').value = t.music_fr || '';
-      document.getElementById('text-music-en').value = t.music_en || '';
-      document.getElementById('text-news-fr').value = t.news_fr || '';
-      document.getElementById('text-news-en').value = t.news_en || '';
-      state.texts = { data: t, sha: (await loadFile('texts.json')).sha };
+      // Réunir les 3 paragraphes bio en une seule case (séparés par ligne vide)
+      const bioParts = [
+        stripHtml(data.about_p1_fr || ''),
+        stripHtml(data.about_p2_fr || ''),
+        stripHtml(data.about_p3_fr || '')
+      ].filter(p => p.trim());
+      document.getElementById('text-bio-fr').value = bioParts.join('\n\n');
+      document.getElementById('text-music-fr').value = data.music_fr || '';
+      document.getElementById('text-news-fr').value = data.news_fr || '';
     } catch(e) { showToast('Erreur chargement textes : ' + e.message, 'error'); }
   }
 
+  async function translateTexts(texts) {
+    const prompt = `Traduis ces textes du français vers l'anglais pour le site d'un groupe de metal. 
+Conserve le ton, le style et les noms propres (DOME, Beyond The Scars, FH Studio, Haunting The Chapel, etc.).
+Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour.
+
+Textes à traduire :
+${JSON.stringify(texts, null, 2)}`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content[0].text.trim();
+    return JSON.parse(text.replace(/```json|```/g, '').trim());
+  }
+
   async function saveTexts() {
-    const data = {
-      about_p1_fr: document.getElementById('text-about-p1-fr').value.trim(),
-      about_p1_en: document.getElementById('text-about-p1-en').value.trim(),
-      about_p2_fr: document.getElementById('text-about-p2-fr').value.trim(),
-      about_p2_en: document.getElementById('text-about-p2-en').value.trim(),
-      about_p3_fr: document.getElementById('text-about-p3-fr').value.trim(),
-      about_p3_en: document.getElementById('text-about-p3-en').value.trim(),
-      music_fr: document.getElementById('text-music-fr').value.trim(),
-      music_en: document.getElementById('text-music-en').value.trim(),
-      news_fr: document.getElementById('text-news-fr').value.trim(),
-      news_en: document.getElementById('text-news-en').value.trim(),
+    const status = document.getElementById('texts-status');
+    const btn = document.querySelector('#tab-textes .btn-primary');
+
+    // Découper la bio en paragraphes (séparés par ligne vide)
+    const bioRaw = document.getElementById('text-bio-fr').value;
+    const bioParagraphs = bioRaw.split(/\n\n+/).map(p => p.trim()).filter(p => p);
+
+    const frTexts = {
+      about_p1: bioParagraphs[0] || '',
+      about_p2: bioParagraphs[1] || '',
+      about_p3: bioParagraphs[2] || '',
+      music: document.getElementById('text-music-fr').value.trim(),
+      news: document.getElementById('text-news-fr').value.trim(),
     };
+
+    btn.disabled = true;
+    btn.textContent = 'Traduction en cours...';
+    status.style.display = 'block';
+    status.style.color = 'var(--text-muted)';
+    status.style.background = 'var(--black)';
+    status.textContent = '⏳ Traduction automatique en anglais...';
+
     try {
+      const enTexts = await translateTexts(frTexts);
+
+      const data = {
+        about_p1_fr: frTexts.about_p1,
+        about_p1_en: enTexts.about_p1 || '',
+        about_p2_fr: frTexts.about_p2,
+        about_p2_en: enTexts.about_p2 || '',
+        about_p3_fr: frTexts.about_p3,
+        about_p3_en: enTexts.about_p3 || '',
+        music_fr: frTexts.music,
+        music_en: enTexts.music || '',
+        news_fr: frTexts.news,
+        news_en: enTexts.news || '',
+      };
+
+      status.textContent = '⏳ Sauvegarde...';
       const { sha } = await loadFile('texts.json');
       await saveFile('texts.json', data, sha);
-      showToast('Textes sauvegardés — redéploiement en cours');
-    } catch(e) { showToast(e.message, 'error'); }
+
+      status.style.color = '#4caf6e';
+      status.textContent = '✓ Textes traduits et sauvegardés !';
+      btn.textContent = 'Traduire & Enregistrer';
+      btn.disabled = false;
+      setTimeout(() => { status.style.display = 'none'; }, 3000);
+    } catch(e) {
+      status.style.color = 'var(--red)';
+      status.textContent = 'Erreur : ' + e.message;
+      btn.textContent = 'Traduire & Enregistrer';
+      btn.disabled = false;
+    }
   }
 
   // =============================================

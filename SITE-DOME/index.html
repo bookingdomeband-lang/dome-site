@@ -2383,13 +2383,15 @@
     const musicEl = document.getElementById('music-desc');
     if (musicEl && music) musicEl.textContent = music;
 
-    // Actualités
+    // Actualités — respecte les retours à la ligne
     const news = textsData[`news_${lang}`];
     const newsSection = document.getElementById('news-section');
     const newsEl = document.getElementById('news-text');
     if (newsSection && newsEl) {
       if (news && news.trim()) {
-        newsEl.innerHTML = news.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+        newsEl.innerHTML = news.split(/\n\n+/).map(p =>
+          `<p>${p.replace(/\n/g, '<br>')}</p>`
+        ).join('');
         newsSection.style.display = 'block';
       } else {
         newsSection.style.display = 'none';
