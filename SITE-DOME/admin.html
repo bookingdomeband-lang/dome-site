@@ -1751,7 +1751,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
         ).join('');
 
         return `<div style="border:1px solid var(--border);background:var(--near-black);padding:1.25rem;margin-bottom:1px;">
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:1rem;align-items:start;">
+          <div style="display:grid;grid-template-columns:160px 1fr 1fr auto;gap:1rem;align-items:start;">
             <div>
               <p style="font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;">Date</p>
               <p style="font-size:0.85rem;color:var(--text);">${date}</p>
@@ -1762,8 +1762,14 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
               <p style="font-size:0.72rem;color:var(--text-dim);">${o.email}</p>
             </div>
             <div>
-              <p style="font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;">Livraison</p>
-              <p style="font-size:0.75rem;color:var(--text-muted);">${o.shipping}</p>
+              <p style="font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;">Adresse de livraison</p>
+              ${o.shipping ? `
+                <p style="font-size:0.8rem;color:var(--text);font-weight:500;">${o.shipping.name}</p>
+                <p style="font-size:0.75rem;color:var(--text-muted);">${o.shipping.line1}</p>
+                ${o.shipping.line2 ? `<p style="font-size:0.75rem;color:var(--text-muted);">${o.shipping.line2}</p>` : ''}
+                <p style="font-size:0.75rem;color:var(--text-muted);">${o.shipping.postal_code} ${o.shipping.city}</p>
+                <p style="font-size:0.7rem;color:var(--text-dim);">${o.shipping.country}</p>
+              ` : '<p style="font-size:0.75rem;color:var(--text-dim);">—</p>'}
             </div>
             <div style="text-align:right;">
               <p style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--accent);letter-spacing:0.05em;">${amount}</p>
