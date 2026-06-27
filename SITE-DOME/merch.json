@@ -51,14 +51,20 @@
   },
   {
     "id": "gobelet",
-    "name_fr": "DOME — Gobelet Réutilisable",
+    "name_fr": "DOME — Eco-Cup",
     "name_en": "DOME — Reusable Cup",
     "type_fr": "Gobelet",
     "type_en": "Cup",
-    "price": 8,
-    "image": null,
+    "price": 3,
+    "image": "merch/gobelet2-2.jpg",
     "has_sizes": false,
-    "colors": []
+    "colors": [],
+    "photo_zoom": 1,
+    "photo_x": 50,
+    "photo_y": 50,
+    "images": [
+      "merch/gobelet2.jpg"
+    ]
   },
   {
     "id": "gobelet-pack",
