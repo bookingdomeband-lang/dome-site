@@ -6,8 +6,7 @@ export async function onRequestGet(context) {
     const res = await fetch(
       'https://api.stripe.com/v1/checkout/sessions?limit=50' +
       '&expand[]=data.line_items' +
-      '&expand[]=data.customer_details' +
-      '&expand[]=data.shipping_details',
+      '&expand[]=data.customer_details',
       { headers: { 'Authorization': `Bearer ${stripeKey}` } }
     );
     const data = await res.json();
