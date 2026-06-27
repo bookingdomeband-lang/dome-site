@@ -15,7 +15,6 @@ export async function onRequestPost(context) {
 
     // Collecte email pour l'envoi automatique du reçu Stripe
     params.append('customer_creation', 'always');
-    params.append('payment_intent_data[setup_future_usage]', 'off_session');
     params.append('billing_address_collection', 'auto');
 
     const countries = ['FR', 'BE', 'CH', 'LU', 'DE', 'ES', 'IT', 'NL'];
