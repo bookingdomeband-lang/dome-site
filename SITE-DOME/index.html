@@ -1359,22 +1359,13 @@
 <!-- ABOUT -->
 <section id="about">
   <div class="about-grid" style="align-items: start;">
-    <div style="display:flex;flex-direction:column;gap:2.5rem;">
-      <!-- Biographie -->
-      <div>
-        <p class="section-label" data-i18n="about_label">Le groupe</p>
-        <h2 class="section-title" data-i18n="about_title">À propos</h2>
-        <div class="about-text" id="about-bio-text">
-          <p data-i18n="about_p1">DOME façonne un metal où le death mélodique rencontre le metalcore, alternant passages incisifs et respirations plus mélodiques.</p>
-          <p data-i18n="about_p2">Les compositions immersives et les riffs tranchés vous entraînent dans une ambiance rappelant les meilleures heures du death mélodique suédois. DOME a eu la chance de partager de belles scènes comme le Haunting The Chapel (Sidilarsen, Do Or Die...) ou encore le Demi-Lune Festival (MacroWave...)</p>
-          <p data-i18n-html="about_p3">S'inspirant de l'univers cinématographique, l'EP <em>Beyond The Scars</em>, enregistré en 2025 au FH Studio, mêle tensions, émotions et narration. Une expérience musicale disponible sur toutes les plateformes et réseaux.</p>
-        </div>
-      </div>
-      <!-- Actualités -->
-      <div id="news-section" style="display:none;">
-        <p class="section-label" data-i18n="news_label">News</p>
-        <h2 class="section-title" data-i18n="news_title">Actualités</h2>
-        <div class="about-text" id="news-text"></div>
+    <div>
+      <p class="section-label" data-i18n="about_label">Le groupe</p>
+      <h2 class="section-title" data-i18n="about_title">À propos</h2>
+      <div class="about-text" id="about-bio-text">
+        <p data-i18n="about_p1">DOME façonne un metal où le death mélodique rencontre le metalcore, alternant passages incisifs et respirations plus mélodiques.</p>
+        <p data-i18n="about_p2">Les compositions immersives et les riffs tranchés vous entraînent dans une ambiance rappelant les meilleures heures du death mélodique suédois. DOME a eu la chance de partager de belles scènes comme le Haunting The Chapel (Sidilarsen, Do Or Die...) ou encore le Demi-Lune Festival (MacroWave...)</p>
+        <p data-i18n-html="about_p3">S'inspirant de l'univers cinématographique, l'EP <a href="#musique" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dark);transition:color 0.2s;"><em>Beyond The Scars</em></a>, enregistré en 2025 au FH Studio, mêle tensions, émotions et narration. Une expérience musicale disponible sur toutes les plateformes et réseaux.</p>
       </div>
     </div>
     <div class="carousel-wrapper">
@@ -1542,8 +1533,6 @@
       merch_choose: 'Choisir',
       merch_add: 'Ajouter',
       music_label: 'Discographie',
-      news_label: 'News',
-      news_title: 'Actualités',
       music_desc: 'Enregistré au FH Studio avec Simon Muller à la production. Cinq titres qui constituent la base du set live actuel de DOME.',
       cart_title: 'Panier',
       cart_empty: 'Votre panier est vide.',
@@ -1603,8 +1592,6 @@
       merch_choose: 'Choose',
       merch_add: 'Add',
       music_label: 'Discography',
-      news_label: 'News',
-      news_title: 'News',
       music_desc: 'Recorded at FH Studio with Simon Muller producing. Five tracks that form the backbone of DOME\'s current live set.',
       cart_title: 'Cart',
       cart_empty: 'Your cart is empty.',
@@ -2384,21 +2371,6 @@
     const music = textsData[`music_${lang}`];
     const musicEl = document.getElementById('music-desc');
     if (musicEl && music) musicEl.textContent = music;
-
-    // Actualités — respecte les retours à la ligne
-    const news = textsData[`news_${lang}`];
-    const newsSection = document.getElementById('news-section');
-    const newsEl = document.getElementById('news-text');
-    if (newsSection && newsEl) {
-      if (news && news.trim()) {
-        newsEl.innerHTML = news.split(/\n\n+/).map(p =>
-          `<p>${p.replace(/\n/g, '<br>')}</p>`
-        ).join('');
-        newsSection.style.display = 'block';
-      } else {
-        newsSection.style.display = 'none';
-      }
-    }
   }
 
   // CONTACT MODAL
