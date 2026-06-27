@@ -441,7 +441,19 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       <div class="form-row">
         <div class="checkbox-row">
           <input type="checkbox" id="merch-has-sizes" checked>
-          <label for="merch-has-sizes">Produit avec tailles (S, M, L, XL, XXL)</label>
+          <label for="merch-has-sizes">Produit avec tailles (XS, S, M, L, XL, XXL)</label>
+        </div>
+      </div>
+
+      <!-- Photos supplémentaires -->
+      <div class="form-row">
+        <label>Photos supplémentaires (optionnel — galerie défilable)</label>
+        <input type="file" id="merch-extra-files" accept="image/*" multiple style="display:none;" onchange="previewExtraImages(this)">
+        <button type="button" class="btn btn-secondary" style="width:100%;margin-bottom:8px;" onclick="document.getElementById('merch-extra-files').click()">+ Ajouter des photos</button>
+        <div id="merch-extra-preview" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;"></div>
+        <div id="merch-existing-images" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        <p style="font-size:0.65rem;color:var(--text-dim);margin-top:6px;">Ces photos forment une galerie défilable sous la photo principale sur le site.</p>
+      </div>
         </div>
       </div>
 
@@ -726,6 +738,38 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       ySlider.value = Math.max(0, Math.min(100, parseFloat(ySlider.value) + dy * sens / zoom));
       updateMerchCropper();
     })(e);
+  }
+
+  // EXTRA IMAGES — MERCH GALLERY
+  let pendingExtraFiles = [];
+  let existingExtraImages = [];
+
+  function previewExtraImages(input) {
+    pendingExtraFiles = Array.from(input.files);
+    const preview = document.getElementById('merch-extra-preview');
+    preview.innerHTML = pendingExtraFiles.map((file, i) => {
+      const url = URL.createObjectURL(file);
+      return `<div style="position:relative;">
+        <img src="${url}" style="width:60px;height:60px;object-fit:cover;border:1px solid var(--border);">
+        <p style="font-size:0.5rem;color:var(--text-dim);text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${file.name}</p>
+      </div>`;
+    }).join('');
+  }
+
+  function renderExistingImages(images) {
+    const el = document.getElementById('merch-existing-images');
+    if (!images || !images.length) { el.innerHTML = ''; return; }
+    el.innerHTML = `<p style="font-size:0.55rem;letter-spacing:0.15em;color:var(--text-dim);width:100%;margin-bottom:6px;">Photos existantes</p>` +
+      images.map((src, i) => `
+        <div style="position:relative;">
+          <img src="${src}" style="width:60px;height:60px;object-fit:cover;border:1px solid var(--border);display:block;">
+          <button onclick="removeExtraImage(${i})" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.7);border:none;color:white;cursor:pointer;font-size:0.6rem;padding:1px 4px;line-height:1;">✕</button>
+        </div>`).join('');
+  }
+
+  function removeExtraImage(i) {
+    existingExtraImages.splice(i, 1);
+    renderExistingImages(existingExtraImages);
   }
 
   // COLOR MANAGEMENT
@@ -1022,7 +1066,12 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     document.getElementById('merch-has-sizes').checked = product ? product.has_sizes : true;
     pendingImageFile = null;
     pendingColorFiles = {};
+    pendingExtraFiles = [];
+    existingExtraImages = product?.images ? [...product.images] : [];
     document.getElementById('merch-colors-list').innerHTML = '';
+    document.getElementById('merch-extra-preview').innerHTML = '';
+    document.getElementById('merch-extra-files').value = '';
+    renderExistingImages(existingExtraImages);
     document.getElementById('merch-photo-zoom').value = product?.photo_zoom || 1;
     document.getElementById('merch-photo-x').value = product?.photo_x || 50;
     document.getElementById('merch-photo-y').value = product?.photo_y || 50;
@@ -1089,6 +1138,18 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       } catch(e) { showToast('Erreur upload couleur : ' + e.message, 'error'); return; }
     }
     pendingColorFiles = {};
+
+    // Upload extra images
+    const uploadedExtras = [...existingExtraImages];
+    for (const file of pendingExtraFiles) {
+      try {
+        showToast('Upload photo supplémentaire...');
+        const filename = await uploadFile(file, 'merch');
+        uploadedExtras.push(`merch/${filename}`);
+      } catch(e) { showToast('Erreur upload : ' + e.message, 'error'); return; }
+    }
+    pendingExtraFiles = [];
+    product.images = uploadedExtras;
 
     const existing = state.merch.data.findIndex(p => p.id === id);
     if (existing >= 0) state.merch.data[existing] = product;
