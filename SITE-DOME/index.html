@@ -871,9 +871,9 @@
 
   .footer-links {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
-    gap: 2rem;
+    gap: 1.5rem;
     list-style: none;
   }
 
@@ -948,16 +948,15 @@
 
     /* FOOTER */
     footer {
+      display: flex;
       flex-direction: column;
       gap: 1.5rem;
       text-align: center;
       padding: 2rem 1.25rem;
     }
-    .footer-links {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-    }
+    .footer-logo { justify-self: unset; }
+    .footer-copy { justify-self: unset; text-align: center; }
+    .footer-links { flex-wrap: wrap; gap: 1rem; }
 
     /* LIGHTBOX */
     .lightbox-nav.prev { left: 0.5rem; }
@@ -2354,7 +2353,10 @@
 
   async function loadTexts() {
     try {
-      const res = await fetch('/texts.json?t=' + Date.now());
+      const res = await fetch('/texts.json', {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+      });
       if (!res.ok) return;
       textsData = await res.json();
       applyTexts();
