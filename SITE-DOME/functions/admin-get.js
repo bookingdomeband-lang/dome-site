@@ -1,6 +1,6 @@
 const REPO = 'bookingdomeband-lang/dome-site';
 const BASE_PATH = 'SITE-DOME';
-const ALLOWED = ['dates.json', 'merch.json', 'members.json', 'concerts.json'];
+const ALLOWED = ['dates.json', 'merch.json', 'members.json', 'concerts.json', 'texts.json'];
 
 export async function onRequestGet(context) {
   const { searchParams } = new URL(context.request.url);
