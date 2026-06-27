@@ -1285,18 +1285,24 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     el.innerHTML = `
       <table class="data-table">
         <thead><tr>
-          <th>Date</th><th>Concert</th><th>Lieu</th><th>Lien</th><th>Statut</th><th>Actions</th>
+          <th>Date</th><th>Concert</th><th>Lieu</th><th>Lien</th><th>Statut</th><th style="text-align:center;">Archivé</th><th>Actions</th>
         </tr></thead>
         <tbody>
           ${sorted.map((c, i) => {
             const origIdx = state.concerts.data.indexOf(c);
             const isPast = new Date(c.date) < today;
-            return `<tr>
-              <td><strong>${c.day} ${c.month}</strong></div></td>
-              <td><strong>${c.venue}</strong></div></td>
-              <td>${c.location}</div></td>
-              <td>${c.link ? `<a href="${c.link}" target="_blank" style="color:var(--accent-dark);font-size:0.75rem;">${c.linkLabel || 'Lien'}</a>` : '—'}</div></td>
-              <td><span class="badge ${isPast ? 'badge-dim' : 'badge-accent'}">${isPast ? 'Passé' : 'À venir'}</span></div></td>
+            const isArchived = !!c.archived;
+            return `<tr style="opacity:${isArchived ? '0.45' : '1'};">
+              <td><strong>${c.day} ${c.month}</strong></td>
+              <td><strong>${c.venue}</strong></td>
+              <td>${c.location}</td>
+              <td>${c.link ? `<a href="${c.link}" target="_blank" style="color:var(--accent-dark);font-size:0.75rem;">${c.linkLabel || 'Lien'}</a>` : '—'}</td>
+              <td><span class="badge ${isPast ? 'badge-dim' : 'badge-accent'}">${isPast ? 'Passé' : 'À venir'}</span></td>
+              <td style="text-align:center;">
+                <input type="checkbox" ${isArchived ? 'checked' : ''}
+                  onchange="toggleArchiveConcert(${origIdx}, this.checked)"
+                  style="width:16px;height:16px;cursor:pointer;accent-color:var(--accent);">
+              </td>
               <td><div style="display:flex;gap:6px;align-items:center;">
                 <button class="btn btn-secondary btn-sm" onclick="editConcert(${origIdx})">Modifier</button>
                 <button class="btn btn-danger btn-sm" onclick="deleteConcert(${origIdx})">Suppr.</button>
@@ -1305,6 +1311,17 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
           }).join('')}
         </tbody>
       </table>`;
+  }
+
+  async function toggleArchiveConcert(i, archived) {
+    state.concerts.data[i].archived = archived;
+    try {
+      await saveFile('dates.json', state.concerts.data, state.concerts.sha);
+      const { sha } = await loadFile('dates.json');
+      state.concerts.sha = sha;
+      renderConcerts();
+      showToast(archived ? 'Concert archivé — masqué sur le site' : 'Concert désarchivé — visible sur le site');
+    } catch(e) { showToast(e.message, 'error'); }
   }
 
   async function openConcertForm(concert = null) {

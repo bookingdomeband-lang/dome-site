@@ -1996,8 +1996,8 @@
   function renderConcerts() {
     const grid = document.getElementById('concertsGrid');
     const today = new Date(); today.setHours(0,0,0,0);
-    const upcoming = CONCERTS.filter(c => new Date(c.date) >= today);
-    const past = CONCERTS.filter(c => new Date(c.date) < today).reverse();
+    const upcoming = CONCERTS.filter(c => !c.archived && new Date(c.date) >= today);
+    const past = CONCERTS.filter(c => !c.archived && new Date(c.date) < today).reverse();
     const locale = currentLang === 'en' ? 'en-GB' : 'fr-FR';
 
     // Format day and month from date field
