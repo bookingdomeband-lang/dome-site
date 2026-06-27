@@ -57,6 +57,7 @@
     "venue": "Nirvana Pub",
     "location": "Nancy - avec Inward & Prosaic",
     "link": null,
-    "linkLabel": null
+    "linkLabel": null,
+    "archived": true
   }
 ]
