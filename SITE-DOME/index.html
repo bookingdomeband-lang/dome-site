@@ -400,6 +400,7 @@
     width: 100%;
     aspect-ratio: 1;
     overflow: hidden;
+    display: block;
   }
 
   .merch-gallery-wrap .merch-img {
@@ -409,11 +410,16 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    filter: grayscale(40%);
+    transition: opacity 0.3s ease, filter 0.4s;
   }
 
   .merch-gallery-wrap .merch-img.active {
     opacity: 1;
+  }
+
+  .merch-item:hover .merch-gallery-wrap .merch-img.active {
+    filter: grayscale(0%);
   }
 
   .merch-gallery-nav {
@@ -1721,7 +1727,7 @@
           <div class="merch-gallery-nav">${dots}</div>`;
       } else {
         imgHtml = defaultImage
-          ? `<div style="width:100%;aspect-ratio:1;overflow:hidden;"><img src="${defaultImage}" alt="${name}" class="merch-img active" id="img-${p.id}-0" style="${imgStyle}"></div>`
+          ? `<div class="merch-gallery-wrap"><img src="${defaultImage}" alt="${name}" class="merch-img active" id="img-${p.id}-0" style="${imgStyle}"></div>`
           : `<div class="merch-img-placeholder"><svg width="80" height="80" viewBox="0 0 80 80" fill="none"><path d="M10 20 L25 10 L40 18 L55 10 L70 20 L60 28 L60 70 L20 70 L20 28 Z" stroke="white" stroke-width="1.5" fill="none"/></svg></div>`;
       }
       return `
