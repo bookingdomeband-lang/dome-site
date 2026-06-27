@@ -43,7 +43,7 @@
   },
   {
     "id": "hoodie-zip",
-    "name_fr": "DOME — Fleur",
+    "name_fr": "DOME — Floral",
     "name_en": "DOME — Flower",
     "type_fr": "T-shirt",
     "type_en": "T-shirt",
@@ -53,7 +53,8 @@
     "colors": [],
     "photo_zoom": 1.1,
     "photo_x": 50,
-    "photo_y": 50
+    "photo_y": 50,
+    "images": []
   },
   {
     "id": "gobelet",
