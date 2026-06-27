@@ -2355,23 +2355,25 @@
     if (!textsData || !Object.keys(textsData).length) return;
     const lang = currentLang;
 
+    const isValid = (text) => text && !text.includes('MYMEMORY WARNING') && !text.includes('mymemory.translated.net');
+
     // Bio
     const p1 = textsData[`about_p1_${lang}`];
     const p2 = textsData[`about_p2_${lang}`];
     const p3 = textsData[`about_p3_${lang}`];
     const bioEl = document.getElementById('about-bio-text');
-    if (bioEl && (p1 || p2 || p3)) {
+    if (bioEl && (isValid(p1) || isValid(p2) || isValid(p3))) {
       bioEl.innerHTML = `
-        ${p1 ? `<p>${p1}</p>` : ''}
-        ${p2 ? `<p>${p2}</p>` : ''}
-        ${p3 ? `<p>${p3}</p>` : ''}
+        ${isValid(p1) ? `<p>${p1}</p>` : ''}
+        ${isValid(p2) ? `<p>${p2}</p>` : ''}
+        ${isValid(p3) ? `<p>${p3}</p>` : ''}
       `;
     }
 
     // Musique
     const music = textsData[`music_${lang}`];
     const musicEl = document.getElementById('music-desc');
-    if (musicEl && music) musicEl.textContent = music;
+    if (musicEl && isValid(music)) musicEl.textContent = music;
   }
 
   // CONTACT MODAL
