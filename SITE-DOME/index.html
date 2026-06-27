@@ -297,17 +297,21 @@
   }
 
   .merch-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 1px;
     background: var(--border);
     border: 1px solid var(--border);
+    justify-content: center;
   }
 
   .merch-item {
     background: var(--near-black);
     cursor: pointer;
     position: relative;
+    width: calc(33.333% - 1px);
+    min-width: 260px;
+    flex: 0 1 calc(33.333% - 1px);
     overflow: hidden;
   }
 
@@ -914,8 +918,8 @@
     .concert-date { font-size: 1.6rem; }
     .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 
-    /* MERCH — 1 colonne sur mobile */
-    .merch-grid { grid-template-columns: 1fr 1fr; }
+    /* MERCH — 2 colonnes sur tablette */
+    .merch-item { width: calc(50% - 1px); flex: 0 1 calc(50% - 1px); min-width: unset; }
 
     /* MUSIQUE — empile les colonnes */
     #musique > div[style*="grid-template-columns"] {
@@ -955,7 +959,7 @@
 
   /* Très petits écrans */
   @media (max-width: 380px) {
-    .merch-grid { grid-template-columns: 1fr; }
+    .merch-item { width: 100%; flex: 0 1 100%; }
     .hero-title { font-size: 4rem; }
     .gallery-grid { grid-template-columns: 1fr; }
   }
