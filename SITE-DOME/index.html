@@ -1360,13 +1360,22 @@
 <!-- ABOUT -->
 <section id="about">
   <div class="about-grid" style="align-items: start;">
-    <div>
-      <p class="section-label" data-i18n="about_label">Le groupe</p>
-      <h2 class="section-title" data-i18n="about_title">À propos</h2>
-      <div class="about-text">
-        <p data-i18n="about_p1">DOME façonne un metal où le death mélodique rencontre le metalcore, alternant passages incisifs et respirations plus mélodiques.</p>
-        <p data-i18n="about_p2">Les compositions immersives et les riffs tranchés vous entraînent dans une ambiance rappelant les meilleures heures du death mélodique suédois. DOME a eu la chance de partager de belles scènes comme le Haunting The Chapel (Sidilarsen, Do Or Die...) ou encore le Demi-Lune Festival (MacroWave...)</p>
-        <p data-i18n-html="about_p3">S'inspirant de l'univers cinématographique, l'EP <em>Beyond The Scars</em>, enregistré en 2025 au FH Studio, mêle tensions, émotions et narration. Une expérience musicale disponible sur toutes les plateformes et réseaux.</p>
+    <div style="display:flex;flex-direction:column;gap:2.5rem;">
+      <!-- Biographie -->
+      <div>
+        <p class="section-label" data-i18n="about_label">Le groupe</p>
+        <h2 class="section-title" data-i18n="about_title">À propos</h2>
+        <div class="about-text" id="about-bio-text">
+          <p data-i18n="about_p1">DOME façonne un metal où le death mélodique rencontre le metalcore, alternant passages incisifs et respirations plus mélodiques.</p>
+          <p data-i18n="about_p2">Les compositions immersives et les riffs tranchés vous entraînent dans une ambiance rappelant les meilleures heures du death mélodique suédois. DOME a eu la chance de partager de belles scènes comme le Haunting The Chapel (Sidilarsen, Do Or Die...) ou encore le Demi-Lune Festival (MacroWave...)</p>
+          <p data-i18n-html="about_p3">S'inspirant de l'univers cinématographique, l'EP <em>Beyond The Scars</em>, enregistré en 2025 au FH Studio, mêle tensions, émotions et narration. Une expérience musicale disponible sur toutes les plateformes et réseaux.</p>
+        </div>
+      </div>
+      <!-- Actualités -->
+      <div id="news-section" style="display:none;">
+        <p class="section-label" data-i18n="news_label">News</p>
+        <h2 class="section-title" data-i18n="news_title">Actualités</h2>
+        <div class="about-text" id="news-text"></div>
       </div>
     </div>
     <div class="carousel-wrapper">
@@ -1403,7 +1412,7 @@
     <div>
       <h2 class="section-title">Beyond the Scars</h2>
       <p style="font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent-dark); margin-bottom:0.5rem;">EP — 2025</p>
-      <p style="font-size:0.95rem; color:#a09890; line-height:1.8; margin-bottom:1.5rem;" data-i18n="music_desc">Enregistré au FH Studio avec Simon Muller à la production. Trois titres qui constituent la base du set live actuel de DOME.</p>
+      <p id="music-desc" style="font-size:0.95rem; color:#a09890; line-height:1.8; margin-bottom:1.5rem;" data-i18n="music_desc">Enregistré au FH Studio avec Simon Muller à la production. Cinq titres qui constituent la base du set live actuel de DOME.</p>
       <div style="display:flex; gap:1rem; flex-wrap:wrap;">
         <a href="https://open.spotify.com/artist/16pO8CZPEgy874Ydyv0R6F" target="_blank" class="btn-tickets" style="display:inline-block; text-decoration:none;">Spotify</a>
         <a href="https://urlr.me/VQmRfd" target="_blank" class="btn-tickets" style="display:inline-block; text-decoration:none; background:var(--mid); color:var(--text);">YouTube</a>
@@ -1425,7 +1434,7 @@
     <li><a href="https://tr.ee/5Y1Tbg7VHb" target="_blank">Spotify</a></li>
     <li><a href="#" onclick="event.preventDefault(); document.getElementById('contactModal').classList.add('open');" data-i18n="footer_contact">Contact</a></li>
   </ul>
-  <p class="footer-copy" data-i18n="footer_copy">© 2025 DOME BAND — Association loi 1901</p>
+  <p class="footer-copy" data-i18n="footer_copy">© 2025 DOME BAND</p>
 </footer>
 
 <!-- CONTACT MODAL -->
@@ -1534,7 +1543,9 @@
       merch_choose: 'Choisir',
       merch_add: 'Ajouter',
       music_label: 'Discographie',
-      music_desc: 'Enregistré au FH Studio avec Simon Muller à la production. Trois titres qui constituent la base du set live actuel de DOME.',
+      news_label: 'News',
+      news_title: 'Actualités',
+      music_desc: 'Enregistré au FH Studio avec Simon Muller à la production. Cinq titres qui constituent la base du set live actuel de DOME.',
       cart_title: 'Panier',
       cart_empty: 'Votre panier est vide.',
       cart_total: 'Total',
@@ -1544,7 +1555,7 @@
       cart_qty: 'Qté',
       toast_added: 'Ajouté au panier',
       toast_size: 'Choisissez une taille',
-      footer_copy: '© 2025 DOME BAND — Association loi 1901',
+      footer_copy: '© 2025 DOME BAND',
       footer_contact: 'Contact',
       contact_label: 'Contact',
       contact_title: 'Nous contacter',
@@ -1593,7 +1604,9 @@
       merch_choose: 'Choose',
       merch_add: 'Add',
       music_label: 'Discography',
-      music_desc: 'Recorded at FH Studio with Simon Muller producing. Three tracks that form the backbone of DOME\'s current live set.',
+      news_label: 'News',
+      news_title: 'News',
+      music_desc: 'Recorded at FH Studio with Simon Muller producing. Five tracks that form the backbone of DOME\'s current live set.',
       cart_title: 'Cart',
       cart_empty: 'Your cart is empty.',
       cart_total: 'Total',
@@ -1653,6 +1666,7 @@
   function toggleLang() {
     currentLang = currentLang === 'fr' ? 'en' : 'fr';
     applyTranslations();
+    applyTexts();
   }
   // =============================================
 
@@ -2333,6 +2347,56 @@
     }
   });
 
+  // =============================================
+  // TEXTS (bio, musique, actualités)
+  // =============================================
+  let textsData = {};
+
+  async function loadTexts() {
+    try {
+      const res = await fetch('/texts.json?t=' + Date.now());
+      if (!res.ok) return;
+      textsData = await res.json();
+      applyTexts();
+    } catch(e) { /* fallback sur les textes statiques */ }
+  }
+
+  function applyTexts() {
+    if (!textsData || !Object.keys(textsData).length) return;
+    const lang = currentLang;
+
+    // Bio
+    const p1 = textsData[`about_p1_${lang}`];
+    const p2 = textsData[`about_p2_${lang}`];
+    const p3 = textsData[`about_p3_${lang}`];
+    const bioEl = document.getElementById('about-bio-text');
+    if (bioEl && (p1 || p2 || p3)) {
+      bioEl.innerHTML = `
+        ${p1 ? `<p>${p1}</p>` : ''}
+        ${p2 ? `<p>${p2}</p>` : ''}
+        ${p3 ? `<p>${p3}</p>` : ''}
+      `;
+    }
+
+    // Musique
+    const music = textsData[`music_${lang}`];
+    const musicEl = document.getElementById('music-desc');
+    if (musicEl && music) musicEl.textContent = music;
+
+    // Actualités
+    const news = textsData[`news_${lang}`];
+    const newsSection = document.getElementById('news-section');
+    const newsEl = document.getElementById('news-text');
+    if (newsSection && newsEl) {
+      if (news && news.trim()) {
+        newsEl.innerHTML = news.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+        newsSection.style.display = 'block';
+      } else {
+        newsSection.style.display = 'none';
+      }
+    }
+  }
+
   // CONTACT MODAL
   function closeContactModal() {
     document.getElementById('contactModal').classList.remove('open');
@@ -2413,6 +2477,7 @@
 
   // Initial render with default language
   applyTranslations();
+  loadTexts();
   loadMerch().then(() => loadStock());
   loadDates();
   loadMembers();

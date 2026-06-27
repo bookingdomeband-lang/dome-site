@@ -296,6 +296,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   <button class="tab" onclick="switchTab('membres')">Membres</button>
   <button class="tab" onclick="switchTab('stock')">Stock</button>
   <button class="tab" onclick="switchTab('commandes')">Commandes</button>
+  <button class="tab" onclick="switchTab('textes')">Textes</button>
 </div>
 
 <main>
@@ -354,6 +355,80 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
       Les 50 dernières commandes confirmées. Données en temps réel depuis Stripe.
     </p>
     <div id="orders-list"><div class="loading">Chargement...</div></div>
+  </div>
+  <!-- ===== TEXTES ===== -->
+  <div class="tab-content" id="tab-textes">
+    <div class="section-header">
+      <h2>Textes du site</h2>
+      <button class="btn btn-primary" onclick="saveTexts()">Enregistrer</button>
+    </div>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:2rem;line-height:1.7;">Modifiez les textes ci-dessous. Chaque modification est publiée immédiatement après sauvegarde.</p>
+
+    <!-- Biographie -->
+    <div style="margin-bottom:2rem;border:1px solid var(--border);padding:1.5rem;">
+      <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:1rem;">Biographie — À propos</h3>
+      <div class="form-row-2">
+        <div>
+          <label>Paragraphe 1 — FR</label>
+          <textarea id="text-about-p1-fr" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+        <div>
+          <label>Paragraphe 1 — EN</label>
+          <textarea id="text-about-p1-en" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div>
+          <label>Paragraphe 2 — FR</label>
+          <textarea id="text-about-p2-fr" rows="4" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+        <div>
+          <label>Paragraphe 2 — EN</label>
+          <textarea id="text-about-p2-en" rows="4" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div>
+          <label>Paragraphe 3 — FR</label>
+          <textarea id="text-about-p3-fr" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+        <div>
+          <label>Paragraphe 3 — EN</label>
+          <textarea id="text-about-p3-en" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Musique -->
+    <div style="margin-bottom:2rem;border:1px solid var(--border);padding:1.5rem;">
+      <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:1rem;">Section Musique</h3>
+      <div class="form-row-2">
+        <div>
+          <label>Description — FR</label>
+          <textarea id="text-music-fr" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+        <div>
+          <label>Description — EN</label>
+          <textarea id="text-music-en" rows="3" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actualités -->
+    <div style="border:1px solid var(--border);padding:1.5rem;">
+      <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:0.5rem;">Actualités</h3>
+      <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;">Laissez vide pour masquer la section. Séparez les paragraphes par une ligne vide.</p>
+      <div class="form-row-2">
+        <div>
+          <label>Actualités — FR</label>
+          <textarea id="text-news-fr" rows="6" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="Ex : DOME sera en concert le 5 décembre 2026 au Festival Metal en Seille à Nomeny !"></textarea>
+        </div>
+        <div>
+          <label>Actualités — EN</label>
+          <textarea id="text-news-en" rows="6" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="Ex: DOME will perform on December 5th 2026 at the Metal en Seille Festival in Nomeny!"></textarea>
+        </div>
+      </div>
+    </div>
   </div>
 
 </main>
@@ -659,6 +734,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelector(`.tab[onclick="switchTab('${name}')"]`).classList.add('active');
     document.getElementById('tab-' + name).classList.add('active');
+    if (name === 'textes') loadTextsAdmin();
   }
 
   // =============================================
@@ -1816,6 +1892,47 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
           label.style.color = shipped ? '#4caf6e' : 'var(--text-dim)';
         }
       }
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // =============================================
+  // TEXTES
+  // =============================================
+  async function loadTextsAdmin() {
+    try {
+      const { data } = await loadFile('texts.json');
+      const t = data;
+      document.getElementById('text-about-p1-fr').value = t.about_p1_fr || '';
+      document.getElementById('text-about-p1-en').value = t.about_p1_en || '';
+      document.getElementById('text-about-p2-fr').value = t.about_p2_fr || '';
+      document.getElementById('text-about-p2-en').value = t.about_p2_en || '';
+      document.getElementById('text-about-p3-fr').value = t.about_p3_fr || '';
+      document.getElementById('text-about-p3-en').value = t.about_p3_en || '';
+      document.getElementById('text-music-fr').value = t.music_fr || '';
+      document.getElementById('text-music-en').value = t.music_en || '';
+      document.getElementById('text-news-fr').value = t.news_fr || '';
+      document.getElementById('text-news-en').value = t.news_en || '';
+      state.texts = { data: t, sha: (await loadFile('texts.json')).sha };
+    } catch(e) { showToast('Erreur chargement textes : ' + e.message, 'error'); }
+  }
+
+  async function saveTexts() {
+    const data = {
+      about_p1_fr: document.getElementById('text-about-p1-fr').value.trim(),
+      about_p1_en: document.getElementById('text-about-p1-en').value.trim(),
+      about_p2_fr: document.getElementById('text-about-p2-fr').value.trim(),
+      about_p2_en: document.getElementById('text-about-p2-en').value.trim(),
+      about_p3_fr: document.getElementById('text-about-p3-fr').value.trim(),
+      about_p3_en: document.getElementById('text-about-p3-en').value.trim(),
+      music_fr: document.getElementById('text-music-fr').value.trim(),
+      music_en: document.getElementById('text-music-en').value.trim(),
+      news_fr: document.getElementById('text-news-fr').value.trim(),
+      news_en: document.getElementById('text-news-en').value.trim(),
+    };
+    try {
+      const { sha } = await loadFile('texts.json');
+      await saveFile('texts.json', data, sha);
+      showToast('Textes sauvegardés — redéploiement en cours');
     } catch(e) { showToast(e.message, 'error'); }
   }
 
