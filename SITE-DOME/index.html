@@ -298,11 +298,13 @@
 
   .merch-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
+    grid-template-columns: repeat(3, 240px);
     gap: 1px;
     background: var(--border);
     border: 1px solid var(--border);
-    justify-content: center;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
   }
 
   .merch-item {
@@ -916,7 +918,7 @@
     .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 
     /* MERCH — 2 colonnes sur tablette */
-    .merch-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 320px)); }
+    .merch-grid { grid-template-columns: repeat(2, 220px); }
 
     /* MUSIQUE — empile les colonnes */
     #musique > div[style*="grid-template-columns"] {
@@ -956,7 +958,7 @@
 
   /* Très petits écrans */
   @media (max-width: 380px) {
-    .merch-grid { grid-template-columns: 1fr; }
+    .merch-grid { grid-template-columns: repeat(1, 100%); width: 100%; }
     .hero-title { font-size: 4rem; }
     .gallery-grid { grid-template-columns: 1fr; }
   }
