@@ -5,21 +5,27 @@
     "name_en": "DOME — Beyond the Scars",
     "type_fr": "T-shirt",
     "type_en": "T-shirt",
-    "price": 25,
+    "price": 20,
     "image": "tshirt-beyond.jpg",
     "has_sizes": true,
     "colors": [
       {
         "name_fr": "Noir",
         "name_en": "Black",
-        "image": "merch/tshirt-noir.png"
+        "image": "merch/tshirt-noir.png",
+        "images": []
       },
       {
         "name_fr": "Blanc",
         "name_en": "White",
-        "image": "merch/tshirt-blanc.png"
+        "image": "merch/tshirt-blanc.png",
+        "images": []
       }
-    ]
+    ],
+    "photo_zoom": 1,
+    "photo_x": 50,
+    "photo_y": 50,
+    "images": []
   },
   {
     "id": "tshirt-tour",
