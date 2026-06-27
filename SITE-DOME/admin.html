@@ -1887,7 +1887,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
         showToast('texts.json introuvable — uploadez-le sur GitHub', 'error');
         return;
       }
-      const { data } = await res.json();
+      const { content: data } = await res.json();
       const bioParts = [
         stripHtml(data.about_p1_fr || ''),
         stripHtml(data.about_p2_fr || ''),
