@@ -65,16 +65,5 @@
     "images": [
       "merch/gobelet2.jpg"
     ]
-  },
-  {
-    "id": "gobelet-pack",
-    "name_fr": "Pack × 2 Gobelets",
-    "name_en": "Pack × 2 Cups",
-    "type_fr": "Gobelet",
-    "type_en": "Cup",
-    "price": 14,
-    "image": null,
-    "has_sizes": false,
-    "colors": []
   }
 ]
