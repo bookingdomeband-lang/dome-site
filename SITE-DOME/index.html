@@ -1435,17 +1435,17 @@
     <p style="font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem;" data-i18n="contact_label">Contact</p>
     <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:0.1em;margin-bottom:1.5rem;" data-i18n="contact_title">Nous contacter</h3>
     <div style="display:flex;flex-direction:column;gap:0.75rem;">
-      <input type="text" id="contactName" placeholder="Nom"
+      <input type="text" id="contactName" data-i18n-placeholder="contact_name" placeholder="Nom"
         style="background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-size:0.85rem;width:100%;box-sizing:border-box;">
       <div style="display:flex;gap:8px;">
-        <input type="email" id="contactEmail" placeholder="Email *" required
+        <input type="email" id="contactEmail" data-i18n-placeholder="contact_email" placeholder="Email *" required
           style="background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-size:0.85rem;flex:1;box-sizing:border-box;">
-        <input type="tel" id="contactPhone" placeholder="Téléphone"
+        <input type="tel" id="contactPhone" data-i18n-placeholder="contact_phone" placeholder="Téléphone"
           style="background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-size:0.85rem;flex:1;box-sizing:border-box;">
       </div>
-      <input type="text" id="contactSubject" placeholder="Sujet"
+      <input type="text" id="contactSubject" data-i18n-placeholder="contact_subject" placeholder="Sujet"
         style="background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-size:0.85rem;width:100%;box-sizing:border-box;">
-      <textarea id="contactMessage" placeholder="Message" rows="5"
+      <textarea id="contactMessage" data-i18n-placeholder="contact_message" placeholder="Message" rows="5"
         style="background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-size:0.85rem;width:100%;box-sizing:border-box;resize:vertical;font-family:inherit;"></textarea>
       <!-- Turnstile widget invisible -->
       <div id="turnstile-widget" class="cf-turnstile"
@@ -1549,6 +1549,8 @@
       contact_label: 'Contact',
       contact_title: 'Nous contacter',
       contact_name: 'Nom',
+      contact_email: 'Email *',
+      contact_phone: 'Téléphone',
       contact_subject: 'Sujet',
       contact_message: 'Message',
       contact_send: 'Envoyer',
@@ -1610,6 +1612,8 @@
       contact_label: 'Contact',
       contact_title: 'Get in touch',
       contact_name: 'Name',
+      contact_email: 'Email *',
+      contact_phone: 'Phone',
       contact_subject: 'Subject',
       contact_message: 'Message',
       contact_send: 'Send',
@@ -1628,6 +1632,9 @@
     });
     document.querySelectorAll('[data-i18n-html]').forEach(el => {
       el.innerHTML = tr(el.dataset.i18nHtml);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      el.placeholder = tr(el.dataset.i18nPlaceholder);
     });
     renderConcerts();
     updateCartUI();
