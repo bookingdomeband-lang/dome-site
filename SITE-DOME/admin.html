@@ -1297,7 +1297,7 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
               <td><strong>${c.venue}</strong></td>
               <td>${c.location}</td>
               <td>${c.link ? `<a href="${c.link}" target="_blank" style="color:var(--accent-dark);font-size:0.75rem;">${c.linkLabel || 'Lien'}</a>` : '—'}</td>
-              <td><span class="badge ${isPast ? 'badge-dim' : 'badge-accent'}">${isPast ? 'Passé' : 'À venir'}</span></td>
+              <td><span class="badge ${isPast ? 'badge-dim' : 'badge-accent'}" style="white-space:nowrap;">${isPast ? 'Passé' : 'À venir'}</span></td>
               <td style="text-align:center;">
                 <input type="checkbox" ${isArchived ? 'checked' : ''}
                   onchange="toggleArchiveConcert(${origIdx}, this.checked)"
@@ -1878,8 +1878,16 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
 
   async function loadTextsAdmin() {
     try {
-      const { data } = await loadFile('texts.json');
-      // Réunir les 3 paragraphes bio en une seule case (séparés par ligne vide)
+      const res = await fetch('/admin-get?file=texts.json');
+      if (!res.ok) {
+        // Fichier pas encore créé — valeurs par défaut
+        document.getElementById('text-bio-fr').value = '';
+        document.getElementById('text-music-fr').value = '';
+        document.getElementById('text-news-fr').value = '';
+        showToast('texts.json introuvable — uploadez-le sur GitHub', 'error');
+        return;
+      }
+      const { data } = await res.json();
       const bioParts = [
         stripHtml(data.about_p1_fr || ''),
         stripHtml(data.about_p2_fr || ''),
