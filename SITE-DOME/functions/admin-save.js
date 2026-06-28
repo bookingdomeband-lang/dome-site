@@ -1,6 +1,6 @@
 const REPO = 'bookingdomeband-lang/dome-site';
 const BASE_PATH = 'SITE-DOME';
-const ALLOWED = ['dates.json', 'merch.json', 'members.json', 'texts.json'];
+const ALLOWED = ['dates.json', 'merch.json', 'members.json'];
 
 export async function onRequestPost(context) {
   let body;
