@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — DOME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #080808;
+      --dark: #111111;
+      --border: #2a2825;
+      --accent: #c8b89a;
+      --accent-dark: #8a7a62;
+      --text: #e8e0d8;
+      --text-muted: #a09890;
+      --text-dim: #6a6258;
+    }
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      text-decoration: none;
+    }
+    .code {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(6rem, 20vw, 12rem);
+      line-height: 1;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      opacity: 0.15;
+      position: absolute;
+      user-select: none;
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      letter-spacing: 0.2em;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 360px;
+      margin: 0 auto 2rem;
+    }
+    a.btn {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid var(--accent-dark);
+      color: var(--accent);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.2em;
+      padding: 12px 32px;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    a.btn:hover {
+      background: var(--accent);
+      color: var(--black);
+    }
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5rem auto;
+    }
+  </style>
+</head>
+<body>
+  <span class="code">404</span>
+  <a href="/" class="logo">DOME</a>
+  <div class="content">
+    <h1>Page introuvable</h1>
+    <p>Cette page n'existe pas ou a été déplacée. Retournez à l'accueil pour continuer.</p>
+    <a href="/" class="btn">Retour à l'accueil</a>
+    <div class="divider"></div>
+    <p style="font-size:0.75rem;color:var(--text-dim);">
+      <a href="/#merch" style="color:var(--text-dim);text-decoration:none;margin-right:1.5rem;">Merch</a>
+      <a href="/#concerts" style="color:var(--text-dim);text-decoration:none;margin-right:1.5rem;">Concerts</a>
+      <a href="/#musique" style="color:var(--text-dim);text-decoration:none;">Musique</a>
+    </p>
+  </div>
+</body>
+</html>
