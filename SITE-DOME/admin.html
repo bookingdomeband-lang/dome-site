@@ -296,7 +296,6 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   <button class="tab" onclick="switchTab('membres')">Membres</button>
   <button class="tab" onclick="switchTab('stock')">Stock</button>
   <button class="tab" onclick="switchTab('commandes')">Commandes</button>
-  <button class="tab" onclick="switchTab('textes')">Textes</button>
 </div>
 
 <main>
@@ -356,41 +355,6 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     </p>
     <div id="orders-list"><div class="loading">Chargement...</div></div>
   </div>
-  <!-- ===== TEXTES ===== -->
-  <div class="tab-content" id="tab-textes">
-    <div class="section-header">
-      <h2>Textes du site</h2>
-      <button class="btn btn-primary" onclick="saveTexts()">Enregistrer</button>
-    </div>
-    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:2rem;line-height:1.7;">
-      Modifiez les textes ci-dessous et cliquez Enregistrer pour les publier sur le site.
-    </p>
-
-    <!-- Biographie -->
-    <div style="margin-bottom:2rem;border:1px solid var(--border);padding:1.5rem;">
-      <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:0.5rem;">Biographie — À propos</h3>
-      <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:0.75rem;">Chaque paragraphe séparé par une ligne vide sera affiché indépendamment sur le site.</p>
-      <textarea id="text-bio-fr" rows="10" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;line-height:1.6;"></textarea>
-    </div>
-
-    <!-- Musique -->
-    <div style="margin-bottom:2rem;border:1px solid var(--border);padding:1.5rem;">
-      <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:0.5rem;">Section Musique</h3>
-      <textarea id="text-music-fr" rows="4" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;line-height:1.6;"></textarea>
-    </div>
-
-    <!-- Actualités -->
-    <div style="border:1px solid var(--border);padding:1.5rem;">
-      <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:1.2rem;margin-bottom:0.5rem;">Actualités</h3>
-      <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:0.75rem;">Laissez vide pour masquer la section sur le site.</p>
-      <textarea id="text-news-fr" rows="6" style="width:100%;background:var(--black);border:1px solid var(--border);color:var(--text);padding:10px;font-size:0.8rem;resize:vertical;font-family:inherit;box-sizing:border-box;line-height:1.6;" placeholder="Ex : DOME sera en concert le 5 décembre 2026 au Festival Metal en Seille à Nomeny !"></textarea>
-    </div>
-    <div id="texts-status" style="margin-top:1rem;font-size:0.8rem;display:none;padding:10px;text-align:center;"></div>
-    <div style="display:flex;justify-content:flex-end;margin-top:1rem;">
-      <button class="btn btn-primary" onclick="saveTexts()">Enregistrer</button>
-    </div>
-  </div>
-
 </main>
 
 <!-- ===== MERCH FORM ===== -->
@@ -694,7 +658,6 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelector(`.tab[onclick="switchTab('${name}')"]`).classList.add('active');
     document.getElementById('tab-' + name).classList.add('active');
-    if (name === 'textes') loadTextsAdmin();
   }
 
   // =============================================
@@ -1875,76 +1838,6 @@ textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
   // =============================================
   // TEXTES
   // =============================================
-  function stripHtml(html) {
-    return html.replace(/<[^>]*>/g, '');
-  }
-
-  async function loadTextsAdmin() {
-    try {
-      const res = await fetch('/admin-get?file=texts.json');
-      if (!res.ok) {
-        // Fichier pas encore créé — valeurs par défaut
-        document.getElementById('text-bio-fr').value = '';
-        document.getElementById('text-music-fr').value = '';
-        document.getElementById('text-news-fr').value = '';
-        showToast('texts.json introuvable — uploadez-le sur GitHub', 'error');
-        return;
-      }
-      const { content: data } = await res.json();
-      const bioParts = [
-        stripHtml(data.about_p1_fr || ''),
-        stripHtml(data.about_p2_fr || ''),
-        stripHtml(data.about_p3_fr || '')
-      ].filter(p => p.trim());
-      document.getElementById('text-bio-fr').value = bioParts.join('\n\n');
-      document.getElementById('text-music-fr').value = data.music_fr || '';
-      document.getElementById('text-news-fr').value = data.news_fr || '';
-    } catch(e) { showToast('Erreur chargement textes : ' + e.message, 'error'); }
-  }
-
-  async function saveTexts() {
-    const status = document.getElementById('texts-status');
-    const btn = document.querySelector('#tab-textes .btn-primary');
-
-    const bioRaw = document.getElementById('text-bio-fr').value;
-    const bioParagraphs = bioRaw.split(/\n\n+/).map(p => p.trim()).filter(p => p);
-    const music = document.getElementById('text-music-fr').value.trim();
-    const news = document.getElementById('text-news-fr').value.trim();
-
-    // Sauvegarde le même texte en FR et EN
-    const data = {
-      about_p1_fr: bioParagraphs[0] || '',
-      about_p1_en: bioParagraphs[0] || '',
-      about_p2_fr: bioParagraphs[1] || '',
-      about_p2_en: bioParagraphs[1] || '',
-      about_p3_fr: bioParagraphs[2] || '',
-      about_p3_en: bioParagraphs[2] || '',
-      music_fr: music,
-      music_en: music,
-      news_fr: news,
-      news_en: news,
-    };
-
-    btn.disabled = true;
-    status.style.display = 'block';
-    status.style.color = 'var(--text-muted)';
-    status.textContent = '⏳ Sauvegarde...';
-
-    try {
-      const { sha } = await loadFile('texts.json');
-      await saveFile('texts.json', data, sha);
-      status.style.color = '#4caf6e';
-      status.textContent = '✓ Textes sauvegardés !';
-      setTimeout(() => { status.style.display = 'none'; }, 3000);
-    } catch(e) {
-      status.style.color = 'var(--red)';
-      status.textContent = 'Erreur : ' + e.message;
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-
   // =============================================
   // INIT
   // =============================================

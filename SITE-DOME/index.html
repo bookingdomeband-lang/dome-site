@@ -1403,7 +1403,7 @@
     <div>
       <h2 class="section-title">Beyond the Scars</h2>
       <p style="font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent-dark); margin-bottom:0.5rem;">EP — 2025</p>
-      <p id="music-desc" style="font-size:0.95rem; color:#a09890; line-height:1.8; margin-bottom:1.5rem;" data-i18n="music_desc">Enregistré au FH Studio avec Simon Muller à la production. Cinq titres qui constituent la base du set live actuel de DOME.</p>
+      <p style="font-size:0.95rem; color:#a09890; line-height:1.8; margin-bottom:1.5rem;" data-i18n="music_desc">Enregistré au FH Studio avec Simon Muller à la production. Cinq titres qui constituent la base du set live actuel de DOME.</p>
       <div style="display:flex; gap:1rem; flex-wrap:wrap;">
         <a href="https://open.spotify.com/artist/16pO8CZPEgy874Ydyv0R6F" target="_blank" class="btn-tickets" style="display:inline-block; text-decoration:none;">Spotify</a>
         <a href="https://urlr.me/VQmRfd" target="_blank" class="btn-tickets" style="display:inline-block; text-decoration:none; background:var(--mid); color:var(--text);">YouTube</a>
@@ -1653,7 +1653,6 @@
   function toggleLang() {
     currentLang = currentLang === 'fr' ? 'en' : 'fr';
     applyTranslations();
-    applyTexts();
   }
   // =============================================
 
@@ -2334,48 +2333,6 @@
     }
   });
 
-  // =============================================
-  // TEXTS (bio, musique, actualités)
-  // =============================================
-  let textsData = {};
-
-  async function loadTexts() {
-    try {
-      const res = await fetch('/texts.json', {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
-      });
-      if (!res.ok) return;
-      textsData = await res.json();
-      applyTexts();
-    } catch(e) { /* fallback sur les textes statiques */ }
-  }
-
-  function applyTexts() {
-    if (!textsData || !Object.keys(textsData).length) return;
-    const lang = currentLang;
-
-    const isValid = (text) => text && !text.includes('MYMEMORY WARNING') && !text.includes('mymemory.translated.net');
-
-    // Bio
-    const p1 = textsData[`about_p1_${lang}`];
-    const p2 = textsData[`about_p2_${lang}`];
-    const p3 = textsData[`about_p3_${lang}`];
-    const bioEl = document.getElementById('about-bio-text');
-    if (bioEl && (isValid(p1) || isValid(p2) || isValid(p3))) {
-      bioEl.innerHTML = `
-        ${isValid(p1) ? `<p>${p1}</p>` : ''}
-        ${isValid(p2) ? `<p>${p2}</p>` : ''}
-        ${isValid(p3) ? `<p>${p3}</p>` : ''}
-      `;
-    }
-
-    // Musique
-    const music = textsData[`music_${lang}`];
-    const musicEl = document.getElementById('music-desc');
-    if (musicEl && isValid(music)) musicEl.textContent = music;
-  }
-
   // CONTACT MODAL
   function closeContactModal() {
     document.getElementById('contactModal').classList.remove('open');
@@ -2456,7 +2413,6 @@
 
   // Initial render with default language
   applyTranslations();
-  loadTexts();
   loadMerch().then(() => loadStock());
   loadDates();
   loadMembers();
