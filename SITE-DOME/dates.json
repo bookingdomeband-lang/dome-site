@@ -37,7 +37,8 @@
     "venue": "Festival Metal en Seille",
     "location": "Nomeny",
     "link": "https://www.facebook.com/events/1516120770009713?locale=fr_FR",
-    "linkLabel": "Info"
+    "linkLabel": "Info",
+    "archived": true
   },
   {
     "id": "haunting",
